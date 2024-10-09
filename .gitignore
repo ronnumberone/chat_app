@@ -1,0 +1,5 @@
+
+*.o
+/Client/build
+/Server/build
+/Server/.vscode
