@@ -12,12 +12,16 @@ SOURCES += \
     src/ClientChatWidget.cpp \
     src/ServerManager.cpp \
     src/main.cpp \
-    src/mainwindow.cpp
+    src/mainwindow.cpp \
+    src/ChatProtocol.cpp \
+    src/ClientManager.cpp
 
 HEADERS += \
     src/ClientChatWidget.h \
     src/ServerManager.h \
-    src/mainwindow.h
+    src/mainwindow.h \
+    src/ChatProtocol.h \
+    src/ClientManager.h
 
 FORMS += \
     ui/ClientChatWidget.ui \
@@ -27,3 +31,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    icons.qrc

@@ -1,5 +1,8 @@
 #ifndef CLIENTCHATWIDGET_H
 #define CLIENTCHATWIDGET_H
+
+#include "ClientManager.h"
+
 #include <QTcpSocket>
 #include <QWidget>
 
@@ -14,15 +17,23 @@ class ClientChatWidget : public QWidget
 public:
     explicit ClientChatWidget(QTcpSocket *client, QWidget *parent = nullptr);
     ~ClientChatWidget();
-
 private slots:
-    void dataReceived();
+
     void clientDisconnected();
+
     void on_btnSend_clicked();
+
+    void textMessageReceived(QString message);
+    void onTyping();
+
+signals:
+    void clientNameChanged(QString name);
+    void isTyping(QString message);
+    void statusChanged(ChatProtocol::Status status);
 
 private:
     Ui::ClientChatWidget *ui;
-    QTcpSocket *_client;
+    ClientManager *_client;
 };
 
 #endif // CLIENTCHATWIDGET_H

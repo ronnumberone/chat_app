@@ -10,12 +10,14 @@ CONFIG += c++17
 
 SOURCES += \
     src/ChatItemWidget.cpp \
+    src/ChatProtocol.cpp \
     src/ClientManager.cpp \
     src/main.cpp \
     src/mainwindow.cpp
 
 HEADERS += \
     src/ChatItemWidget.h \
+    src/ChatProtocol.h \
     src/ClientManager.h \
     src/mainwindow.h
 
