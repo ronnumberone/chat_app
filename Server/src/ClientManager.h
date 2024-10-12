@@ -20,18 +20,24 @@ public:
     void sendName(QString name);
     void sendStatus(ChatProtocol::Status status);
     QString name() const;
-public:
     void sendIsTyping();
+
+
+    void sendInitSendingFile(QString fileName);
+    void sendAcceptFile();
+    void sendRejectFile();
 
 signals:
     void connected();
     void disconnected();
-//    void dataReceived(QByteArray data);
+    //    void dataReceived(QByteArray data);
     void textMessageReceived(const QString message);
     void isTyping();
     void nameChanged(QString name);
     void statusChanged(ChatProtocol::Status status);
-
+    void rejectReceivingFile();
+    void initReceivingFile(QString clientName, QString fileName, qint64 fileSize);
+    void fileSaved(QString path);
 private slots:
     void readyRead();
 
@@ -40,9 +46,12 @@ private: //fields
     QHostAddress _ip;
     ushort _port;
     ChatProtocol _protocol;
+    QString _tmpFileName;
 
 private: //methods
-     void setupClient();
+    void setupClient();
+    void sendFile();
+    void saveFile();
 };
 
 #endif // CLIENTMANAGER_H
