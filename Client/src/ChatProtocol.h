@@ -3,8 +3,7 @@
 
 #include <QByteArray>
 #include <QString>
-
-
+#include <QStringList>
 
 class ChatProtocol
 {
@@ -17,7 +16,11 @@ public:
         InitSendingFile,
         AcceptSendingFile,
         RejectSendingFile,
-        SendFile
+        SendFile,
+        ClientName,
+        ConnectionACK,
+        NewClient,
+        ClientDisconnected
     };
 
     enum Status{
@@ -29,7 +32,7 @@ public:
 
     ChatProtocol();
 
-    QByteArray textMessage(QString message);
+    QByteArray textMessage(QString message, QString receiver);
     QByteArray isTypingMessage();
     QByteArray setNameMessage(QString name);
     QByteArray setStatusMessage(Status status);
@@ -39,20 +42,18 @@ public:
     QByteArray setFileMessage(QString fileName);
 
     void loadData(QByteArray data);
-
     const QString &message() const;
-
     const QString &name() const;
-
     Status status() const;
-
     MessageType type() const;
-
     const QString &fileName() const;
-
     qint64 fileSize() const;
-
     const QByteArray &fileData() const;
+    QString receiver() const;
+    const QString &clientName() const;
+    const QString &prevName() const;
+    const QStringList &clientsName() const;
+    const QString &myName() const;
 
 private:
     QByteArray getData(MessageType type, QString data);
@@ -64,6 +65,11 @@ private:
     QString _fileName;
     qint64 _fileSize;
     QByteArray _fileData;
+    QString _receiver;
+    QString _clientName;
+    QString _prevName;
+    QStringList _clientsName;
+    QString _myName;
 
 };
 

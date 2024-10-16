@@ -1,6 +1,5 @@
 #include "ClientChatWidget.h"
 #include "ui_ClientChatWidget.h"
-
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QUrl>
@@ -21,10 +20,13 @@ ClientChatWidget::ClientChatWidget(QTcpSocket *client, QWidget *parent) :
     connect(_client, &ClientManager::fileSaved, this, &ClientChatWidget::onFileSaved);
     connect(ui->lnMessage, &QLineEdit::textChanged, _client, &ClientManager::sendIsTyping);
 
-    qDebug()<<dir.absolutePath();
     dir.mkdir(_client->name());
     dir.setPath("./" + _client->name());
+}
 
+void ClientChatWidget::disconnect()
+{
+    _client->disconnectFromHost();
 }
 
 ClientChatWidget::~ClientChatWidget()
@@ -45,16 +47,20 @@ void ClientChatWidget::on_btnSend_clicked()
     ui->lstMessages->addItem(message);
 }
 
-void ClientChatWidget::textMessageReceived(QString message)
+void ClientChatWidget::textMessageReceived(QString message, QString receiver)
 {
-    ui->lstMessages->addItem(message);
+    if (receiver == "Server" || receiver == "All") {
+        ui->lstMessages->addItem(message);
+    }
+    if(receiver != "Server"){
+        emit textForOtherClients(message, receiver, _client->name());
+    }
 }
 
 void ClientChatWidget::onTyping()
 {
     emit isTyping(QString("%1 is typing...").arg(_client->name()));
 }
-
 
 void ClientChatWidget::onInitReceivingFile(QString clientName, QString fileName, qint64 fileSize)
 {
@@ -67,7 +73,6 @@ void ClientChatWidget::onInitReceivingFile(QString clientName, QString fileName,
     } else {
         _client->sendRejectFile();
     }
-
 }
 
 void ClientChatWidget::onFileSaved(QString path)
@@ -81,8 +86,8 @@ void ClientChatWidget::on_lblOpenFolder_linkActivated(const QString &link)
     QDesktopServices::openUrl(QUrl::fromLocalFile(_client->name()));
 }
 
-void ClientChatWidget::onClientNameChanged(QString name)
+void ClientChatWidget::onClientNameChanged(QString prevName, QString name)
 {
     QFile::rename(dir.canonicalPath(), name);
-    emit clientNameChanged(name);
+    emit clientNameChanged(prevName, name);
 }

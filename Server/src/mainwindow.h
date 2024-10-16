@@ -16,15 +16,19 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
 private slots:
     void newClientConnected(QTcpSocket *client);
     void clientDisconnected(QTcpSocket *client);
-    void setClientName(QString name);
+    void setClientName(QString prevName, QString name);
     void setClientStatus(ChatProtocol::Status status);
+    void on_tbClientsChat_tabCloseRequested(int index);
+
 private: //fields
     Ui::MainWindow *ui;
     ServerManager *_server;
+
 private: //methods
-    void setupServer();
+    void seupServer();
 };
 #endif // MAINWINDOW_H

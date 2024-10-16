@@ -1,5 +1,7 @@
 #include "ClientManager.h"
 
+#include <QHostAddress>
+
 ClientManager::ClientManager(QHostAddress ip, ushort port, QObject *parent)
     : QObject{parent},
     _ip(ip),
@@ -13,9 +15,9 @@ void ClientManager::connectToServer()
     _socket->connectToHost(_ip, _port);
 }
 
-void ClientManager::sendMessage(QString message)
+void ClientManager::sendMessage(QString message, QString receiver)
 {
-    _socket->write(_protocol.textMessage(message));
+    _socket->write(_protocol.textMessage(message, receiver));
 }
 
 void ClientManager::sendName(QString name)
@@ -77,6 +79,18 @@ void ClientManager::readyRead()
     case ChatProtocol::RejectSendingFile:
         emit rejectReceivingFile();
         break;
+    case ChatProtocol::ConnectionACK:
+        emit connectionACK(_protocol.myName(), _protocol.clientsName());
+        break;
+    case ChatProtocol::NewClient:
+        emit newClientConnectedToServer(_protocol.clientName());
+        break;
+    case ChatProtocol::ClientDisconnected:
+        emit clientDisconnected(_protocol.clientName());
+        break;
+    case ChatProtocol::ClientName:
+        emit clientNameChanged(_protocol.prevName(), _protocol.clientName());
+        break;
     default:
         break;
     }
@@ -93,7 +107,6 @@ void ClientManager::setupClient()
 void ClientManager::sendFile()
 {
     _socket->write(_protocol.setFileMessage(_tmpFileName));
-    qDebug()<<"send";
 }
 
 

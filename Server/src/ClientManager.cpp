@@ -1,7 +1,6 @@
 #include "ClientManager.h"
-
-#include <QDir>
 #include <QDateTime>
+#include <QDir>
 
 ClientManager::ClientManager(QHostAddress ip, ushort port, QObject *parent)
     : QObject{parent},
@@ -24,9 +23,14 @@ void ClientManager::connectToServer()
     _socket->connectToHost(_ip, _port);
 }
 
+void ClientManager::disconnectFromHost()
+{
+    _socket->disconnectFromHost();
+}
+
 void ClientManager::sendMessage(QString message)
 {
-    _socket->write(_protocol.textMessage(message));
+    _socket->write(_protocol.textMessage(message, name()));
 }
 
 void ClientManager::sendName(QString name)
@@ -74,11 +78,14 @@ void ClientManager::readyRead()
     _protocol.loadData(data);
     switch (_protocol.type()) {
     case ChatProtocol::Text:
-        emit textMessageReceived(_protocol.message());
+        emit textMessageReceived(_protocol.message(), _protocol.receiver());
         break;
-    case ChatProtocol::SetName:
-        emit nameChanged(name());
+    case ChatProtocol::SetName:{
+        auto prevName = _socket->property("clientName").toString();
+        _socket->setProperty("clientName", name());
+        emit nameChanged(prevName, name());
         break;
+    }
     case ChatProtocol::SetStatus:
         emit statusChanged(_protocol.status());
         break;
