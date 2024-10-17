@@ -30,7 +30,7 @@ void ClientManager::disconnectFromHost()
 
 void ClientManager::sendMessage(QString message)
 {
-    _socket->write(_protocol.textMessage(message, name()));
+    _socket->write(_protocol.textMessage(message, name(), "Server"));
 }
 
 void ClientManager::sendName(QString name)

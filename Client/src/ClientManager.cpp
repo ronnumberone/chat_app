@@ -59,7 +59,7 @@ void ClientManager::readyRead()
     _protocol.loadData(data);
     switch (_protocol.type()) {
     case ChatProtocol::Text:
-        emit textMessageReceived(_protocol.message());
+        emit textMessageReceived(_protocol.message(), _protocol.sender());
         break;
     case ChatProtocol::SetName:
         emit nameChanged(_protocol.name());

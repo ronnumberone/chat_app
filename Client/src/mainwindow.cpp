@@ -1,8 +1,10 @@
 #include "ChatItemWidget.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QFileDialog>>
+#include <QFileDialog>
 #include <QMessageBox>
+#include <QDebug>
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -53,20 +55,20 @@ void MainWindow::on_btnSend_clicked()
     ui->lnMessage->setFocus();
 
     auto chatWidget = new ChatItemWidget();
-    chatWidget->setMessage(message, true);
+    chatWidget->setMessage(message, "", true);
     auto listWidgetItem = new QListWidgetItem();
-    listWidgetItem->setSizeHint(QSize(0, 65));
+    listWidgetItem->setSizeHint(QSize(0, 60));
     ui->lstMessages->addItem(listWidgetItem);
     ui->lstMessages->setItemWidget(listWidgetItem, chatWidget);
 }
 
-void MainWindow::dataReceived(QString message)
+void MainWindow::dataReceived(QString message, QString sender)
 {
     //    ui->lstMessages->addItem(data);
     auto chatWidget = new ChatItemWidget();
-    chatWidget->setMessage(message);
+    chatWidget->setMessage(message, sender);
     auto listWidgetItem = new QListWidgetItem();
-    listWidgetItem->setSizeHint(QSize(0, 65));
+    listWidgetItem->setSizeHint(QSize(0, 60));
     ui->lstMessages->addItem(listWidgetItem);
     listWidgetItem->setBackground(QColor(167, 255, 237));
     ui->lstMessages->setItemWidget(listWidgetItem, chatWidget);

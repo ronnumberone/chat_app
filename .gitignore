@@ -3,3 +3,5 @@
 /Client/build
 /Server/build
 /Server/.vscode
+/Client/Client.pro.user
+/Server/Server.pro.user

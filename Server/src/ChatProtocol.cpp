@@ -8,12 +8,12 @@ ChatProtocol::ChatProtocol()
 
 }
 
-QByteArray ChatProtocol::textMessage(QString message, QString receiver)
+QByteArray ChatProtocol::textMessage(QString message, QString receiver, QString sender)
 {
     QByteArray ba;
     QDataStream out(&ba, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_15);
-    out << Text << receiver << message;
+    out << Text << receiver << message << sender;
     return ba;
 }
 

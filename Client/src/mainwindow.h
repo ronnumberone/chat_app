@@ -19,7 +19,7 @@ public:
 private slots:
     void on_actionConnect_triggered();
     void on_btnSend_clicked();
-    void dataReceived(QString message);
+    void dataReceived(QString message, QString sender);
     void on_lnClientName_editingFinished();
     void on_cmbStatus_currentIndexChanged(int index);
     void onTyping();

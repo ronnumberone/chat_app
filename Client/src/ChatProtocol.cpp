@@ -79,7 +79,7 @@ void ChatProtocol::loadData(QByteArray data)
     in >> _type;
     switch (_type) {
     case Text:
-        in >> _receiver >> _message;
+        in >> _receiver >> _message >> _sender;
         break;
     case SetName:
         in >> _name;
@@ -115,6 +115,11 @@ QByteArray ChatProtocol::getData(MessageType type, QString data)
     out.setVersion(QDataStream::Qt_5_15);
     out << type << data;
     return ba;
+}
+
+QString ChatProtocol::sender() const
+{
+    return _sender;
 }
 
 const QString &ChatProtocol::myName() const

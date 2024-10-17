@@ -55,6 +55,8 @@ public:
     const QStringList &clientsName() const;
     const QString &myName() const;
 
+    QString sender() const;
+
 private:
     QByteArray getData(MessageType type, QString data);
 
@@ -66,6 +68,7 @@ private:
     qint64 _fileSize;
     QByteArray _fileData;
     QString _receiver;
+    QString _sender;
     QString _clientName;
     QString _prevName;
     QStringList _clientsName;
