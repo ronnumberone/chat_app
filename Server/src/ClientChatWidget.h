@@ -25,20 +25,18 @@ private slots:
     void clientDisconnected();
 
     void on_btnSend_clicked();
-
-    void textMessageReceived(QString message, QString receiver);
-    void onTyping();
+    void onTyping(QString receiver);
 
     void onInitReceivingFile(QString clientName, QString fileName, qint64 fileSize);
     void onFileSaved(QString path);
     void on_lblOpenFolder_linkActivated(const QString &link);
-    void onClientNameChanged(QString prevName, QString name);
 
 signals:
     void clientNameChanged(QString prevName, QString name);
-    void isTyping(QString message);
-    void statusChanged(ChatProtocol::Status status);
+    void isTyping(QString message, QString sender, QString receiver);
     void textForOtherClients(QString message, QString receiver, QString sender);
+    void sendFile(QString receiver, QString fileName, qint64 fileSize, QByteArray fileData, QString sender);
+    void statusChanged(ChatProtocol::Status status, QString sender);
 
 private:
     Ui::ClientChatWidget *ui;

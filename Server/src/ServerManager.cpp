@@ -1,4 +1,5 @@
 #include "ServerManager.h"
+#include <QDebug>
 
 ServerManager::ServerManager(ushort port, QObject *parent)
     : QObject{parent}
@@ -19,21 +20,43 @@ void ServerManager::notifyOtherClients(QString prevName, QString name)
 
 void ServerManager::onTextForOtherClients(QString message, QString receiver, QString sender)
 {
-    auto msg = _protocol.textMessage(message, receiver, sender);
-    if (receiver == "All") {
-        foreach (auto cl, _clients) {
-            auto clientName = cl->property("clientName").toString();
-            if (clientName != sender) {
-                cl->write(msg);
-            }
+    auto msg = _protocol.textMessage(message, sender);
+    foreach (auto cl, _clients) {
+        auto clientName = cl->property("clientName").toString();
+        if (clientName == receiver) {
+            cl->write(msg);
+            return;
         }
-    } else {
-        foreach (auto cl, _clients) {
-            auto clientName = cl->property("clientName").toString();
-            if (clientName == receiver) {
-                cl->write(msg);
-                return;
-            }
+    }
+}
+
+void ServerManager::onSendFile(QString receiver, QString fileName, qint64 fileSize, QByteArray fileData, QString sender)
+{
+    auto fileMessage = _protocol.setFileMessage(sender, fileName, fileSize, fileData);
+    foreach (auto cl, _clients) {
+        auto clientName = cl->property("clientName").toString();
+        if (clientName == receiver) {
+            cl->write(fileMessage);
+            return;
+        }
+    }
+}
+
+void ServerManager::onSetStatus(ChatProtocol::Status status, QString sender)
+{
+    auto statusMessage = _protocol.setStatusMessage(status, sender);
+    foreach (auto cl, _clients) {
+        cl->write(statusMessage);
+    }
+}
+
+void ServerManager::onClientTyping(QString sender, QString receiver)
+{
+    auto typingMessage = _protocol.isTypingMessage(sender);
+    foreach (auto cl, _clients) {
+        auto clientName = cl->property("clientName").toString();
+        if (clientName == receiver) {
+            cl->write(typingMessage);
         }
     }
 }

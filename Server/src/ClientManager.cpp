@@ -30,7 +30,7 @@ void ClientManager::disconnectFromHost()
 
 void ClientManager::sendMessage(QString message)
 {
-    _socket->write(_protocol.textMessage(message, name(), "Server"));
+    _socket->write(_protocol.textMessage(message, "Server"));
 }
 
 void ClientManager::sendName(QString name)
@@ -40,7 +40,7 @@ void ClientManager::sendName(QString name)
 
 void ClientManager::sendStatus(ChatProtocol::Status status)
 {
-    _socket->write(_protocol.setStatusMessage(status));
+    _socket->write(_protocol.setStatusMessage(status, name()));
 }
 
 QString ClientManager::name() const
@@ -51,9 +51,9 @@ QString ClientManager::name() const
     return name;
 }
 
-void ClientManager::sendIsTyping()
+void ClientManager::sendIsTyping(QString receiver)
 {
-    _socket->write(_protocol.isTypingMessage());
+    _socket->write(_protocol.isTypingMessage(name()));
 }
 
 
@@ -90,18 +90,19 @@ void ClientManager::readyRead()
         emit statusChanged(_protocol.status());
         break;
     case ChatProtocol::IsTyping:
-        emit isTyping();
+        emit isTyping(_protocol.receiver());
         break;
     case ChatProtocol::InitSendingFile:
         emit initReceivingFile(_protocol.name(), _protocol.fileName(), _protocol.fileSize());
         break;
     case ChatProtocol::AcceptSendingFile:
-        sendFile();
+        //sendFile();
         break;
     case ChatProtocol::RejectSendingFile:
         emit rejectReceivingFile();
         break;
     case ChatProtocol::SendFile:
+        emit fileSend(_protocol.receiver(), _protocol.fileName(), _protocol.fileSize(), _protocol.fileData());
         saveFile();
         break;
     default:
@@ -116,10 +117,10 @@ void ClientManager::setupClient()
     connect(_socket, &QTcpSocket::readyRead, this, &ClientManager::readyRead);
 }
 
-void ClientManager::sendFile()
-{
-    _socket->write(_protocol.setFileMessage(_tmpFileName));
-}
+// void ClientManager::sendFile()
+// {
+//     _socket->write(_protocol.setFileMessage(_tmpFileName));
+// }
 
 void ClientManager::saveFile()
 {

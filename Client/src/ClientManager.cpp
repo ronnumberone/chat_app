@@ -30,27 +30,9 @@ void ClientManager::sendStatus(ChatProtocol::Status status)
     _socket->write(_protocol.setStatusMessage(status));
 }
 
-void ClientManager::sendIsTyping()
+void ClientManager::sendIsTyping(QString receiver)
 {
-    _socket->write(_protocol.isTypingMessage());
-}
-
-void ClientManager::sendInitSendingFile(QString fileName)
-{
-    _tmpFileName = fileName;
-    _socket->write(_protocol.setInitSendingFileMessage(fileName));
-}
-
-void ClientManager::sendAcceptFile()
-{
-    _socket->write(_protocol.setAcceptFileMessage());
-
-}
-
-void ClientManager::sendRejectFile()
-{
-    _socket->write(_protocol.setRejectFileMessage());
-
+    _socket->write(_protocol.isTypingMessage(receiver));
 }
 
 void ClientManager::readyRead()
@@ -65,19 +47,13 @@ void ClientManager::readyRead()
         emit nameChanged(_protocol.name());
         break;
     case ChatProtocol::SetStatus:
-        emit statusChanged(_protocol.status());
+        emit statusChanged(_protocol.status(), _protocol.sender());
         break;
     case ChatProtocol::IsTyping:
-        emit isTyping();
+        emit isTyping(_protocol.sender());
         break;
-    case ChatProtocol::InitSendingFile:
-        emit initReceivingFile(_protocol.name(), _protocol.fileName(), _protocol.fileSize());
-        break;
-    case ChatProtocol::AcceptSendingFile:
-        sendFile();
-        break;
-    case ChatProtocol::RejectSendingFile:
-        emit rejectReceivingFile();
+    case ChatProtocol::SendFile:
+        emit receiveFile(_protocol.sender(), _protocol.fileName(), _protocol.fileSize(), _protocol.fileData());
         break;
     case ChatProtocol::ConnectionACK:
         emit connectionACK(_protocol.myName(), _protocol.clientsName());
@@ -104,9 +80,9 @@ void ClientManager::setupClient()
     connect(_socket, &QTcpSocket::readyRead, this, &ClientManager::readyRead);
 }
 
-void ClientManager::sendFile()
+void ClientManager::sendFile(QString receiver, QString fileName)
 {
-    _socket->write(_protocol.setFileMessage(_tmpFileName));
+    _socket->write(_protocol.setFileMessage(receiver, fileName));
 }
 
 

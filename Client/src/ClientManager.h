@@ -17,22 +17,20 @@ public:
     void sendMessage(QString message, QString receiver);
     void sendName(QString name);
     void sendStatus(ChatProtocol::Status status);
-    void sendIsTyping();
+    void sendIsTyping(QString receiver);
+    void sendFile(QString receiver, QString fileName);
 
-    void sendInitSendingFile(QString fileName);
-    void sendAcceptFile();
-    void sendRejectFile();
+    ChatProtocol _protocol;
 
 signals:
     void connected();
     void disconnected();
     //    void dataReceived(QByteArray data);
     void textMessageReceived(QString message, QString sender);
-    void isTyping();
+    void isTyping(QString sender);
     void nameChanged(QString name);
-    void statusChanged(ChatProtocol::Status status);
-    void rejectReceivingFile();
-    void initReceivingFile(QString clientName, QString fileName, qint64 fileSize);
+    void statusChanged(ChatProtocol::Status status, QString sender);
+    void receiveFile(QString sender, QString fileName, qint64 fileSize, QByteArray fileData);
 
     void connectionACK(QString myName, QStringList clientsName);
     void newClientConnectedToServer(QString clienName);
@@ -47,12 +45,11 @@ private:
     QTcpSocket *_socket;
     QHostAddress _ip;
     ushort _port;
-    ChatProtocol _protocol;
+
     QString _tmpFileName;
 
     //methods
     void setupClient();
-    void sendFile();
 };
 
 #endif // CLIENTMANAGER_H

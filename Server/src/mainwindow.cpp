@@ -21,13 +21,15 @@ void MainWindow::newClientConnected(QTcpSocket *client)
     auto chatWidget= new ClientChatWidget(client, ui->tbClientsChat);
     ui->tbClientsChat->addTab(chatWidget, QString("Client (%1)").arg(id));
 
-    connect(chatWidget, &ClientChatWidget::clientNameChanged, this, &MainWindow::setClientName);
-    connect(chatWidget, &ClientChatWidget::statusChanged, this, &MainWindow::setClientStatus);
-    connect(chatWidget, &ClientChatWidget::isTyping, [this](QString name){
-        this->statusBar()->showMessage(name, 750);
+    connect(chatWidget, &ClientChatWidget::clientNameChanged, this, &MainWindow::setClientName);   
+    connect(chatWidget, &ClientChatWidget::isTyping, [this](QString message, QString sender, QString receiver){
+        this->statusBar()->showMessage(message, 750);
+        _server->onClientTyping(sender, receiver);
     });
 
+    connect(chatWidget, &ClientChatWidget::statusChanged, _server, &ServerManager::onSetStatus);
     connect(chatWidget, &ClientChatWidget::textForOtherClients, _server, &ServerManager::onTextForOtherClients);
+    connect(chatWidget, &ClientChatWidget::sendFile, _server, &ServerManager::onSendFile);
 }
 
 void MainWindow::clientDisconnected(QTcpSocket *client)

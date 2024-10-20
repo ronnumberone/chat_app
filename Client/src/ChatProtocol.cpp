@@ -3,6 +3,7 @@
 #include <QDataStream>
 #include <QFileInfo>
 #include <QIODevice>
+#include <QDebug>
 
 ChatProtocol::ChatProtocol()
 {
@@ -18,9 +19,9 @@ QByteArray ChatProtocol::textMessage(QString message, QString receiver)
     return ba;
 }
 
-QByteArray ChatProtocol::isTypingMessage()
+QByteArray ChatProtocol::isTypingMessage(QString receiver)
 {
-    return getData(IsTyping, "");
+    return getData(IsTyping, receiver);
 }
 
 QByteArray ChatProtocol::setNameMessage(QString name)
@@ -37,13 +38,13 @@ QByteArray ChatProtocol::setStatusMessage(Status status)
     return ba;
 }
 
-QByteArray ChatProtocol::setInitSendingFileMessage(QString fileName)
+QByteArray ChatProtocol::setInitSendingFileMessage(QString fileName, QString receiver)
 {
     QByteArray ba;
     QDataStream out(&ba, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_15);
     QFileInfo info(fileName);
-    out << InitSendingFile << info.fileName() << info.size();
+    out << InitSendingFile << receiver << info.fileName() << info.size();
     return ba;
 }
 
@@ -58,7 +59,7 @@ QByteArray ChatProtocol::setRejectFileMessage()
     return getData(RejectSendingFile, "");
 }
 
-QByteArray ChatProtocol::setFileMessage(QString fileName)
+QByteArray ChatProtocol::setFileMessage(QString receiver, QString fileName)
 {
     QByteArray ba;
     QFile file(fileName);
@@ -66,7 +67,7 @@ QByteArray ChatProtocol::setFileMessage(QString fileName)
         QDataStream out(&ba, QIODevice::WriteOnly);
         out.setVersion(QDataStream::Qt_5_15);
         QFileInfo info(fileName);
-        out << SendFile << info.fileName() << info.size() << file.readAll();
+        out << SendFile << receiver << info.fileName() << info.size() << file.readAll();
         file.close();
     }
     return ba;
@@ -79,19 +80,22 @@ void ChatProtocol::loadData(QByteArray data)
     in >> _type;
     switch (_type) {
     case Text:
-        in >> _receiver >> _message >> _sender;
+        in  >> _message >> _sender;
         break;
     case SetName:
         in >> _name;
         break;
+    case IsTyping:
+        in >> _sender;
+        break;
     case SetStatus:
-        in >> _status;
+        in >> _status >> _sender;
         break;
     case InitSendingFile:
         in >> _fileName >> _fileSize;
         break;
     case SendFile:
-        in >> _fileName >> _fileSize >> _fileData;
+        in >> _sender >> _fileName >> _fileSize >> _fileData;
         break;
     case ClientName:
         in >> _prevName >> _clientName;

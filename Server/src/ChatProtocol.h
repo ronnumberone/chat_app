@@ -31,14 +31,14 @@ public:
 
     ChatProtocol();
 
-    QByteArray textMessage(QString message, QString receiver, QString sender);
-    QByteArray isTypingMessage();
+    QByteArray textMessage(QString message, QString sender);
+    QByteArray isTypingMessage(QString sender);
     QByteArray setNameMessage(QString name);
-    QByteArray setStatusMessage(Status status);
+    QByteArray setStatusMessage(Status status, QString sender);
     QByteArray setInitSendingFileMessage(QString fileName);
     QByteArray setAcceptFileMessage();
     QByteArray setRejectFileMessage();
-    QByteArray setFileMessage(QString fileName);
+    QByteArray setFileMessage(QString sender, QString fileName, qint64 fileSize, QByteArray fileData);
 
     QByteArray setClientNameMessage(QString prevName, QString name);
     QByteArray setConnectionACKMessage(QString clientName, QStringList otherClients);

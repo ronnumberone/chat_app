@@ -4,5 +4,6 @@
         <file>icons/away.png</file>
         <file>icons/busy.png</file>
         <file>icons/logo.png</file>
+        <file>icons/file.png</file>
     </qresource>
 </RCC>
