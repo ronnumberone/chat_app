@@ -19,7 +19,7 @@
    </item>
    <item>
     <widget class="QWidget" name="wdgSendMessage" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0,0">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0,0,0">
       <item>
        <widget class="QLabel" name="lblMessage">
         <property name="text">
@@ -29,6 +29,23 @@
       </item>
       <item>
        <widget class="QLineEdit" name="lnMessage"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="recordBtn">
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: none</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/record.png</normaloff>:/icons/record.png</iconset>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="btnSend">
@@ -63,6 +80,8 @@ color:&quot;white&quot;</string>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

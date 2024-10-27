@@ -5,5 +5,9 @@
         <file>icons/busy.png</file>
         <file>icons/logo.png</file>
         <file>icons/file.png</file>
+        <file>icons/record.png</file>
+        <file>icons/recording.png</file>
+        <file>icons/pause.png</file>
+        <file>icons/play.png</file>
     </qresource>
 </RCC>

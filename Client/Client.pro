@@ -1,4 +1,4 @@
-QT       += core gui network
+QT       += core gui network multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/RecordItemWidget.cpp \
     src/FileItemWidget.cpp \
     src/ClientChatWidget.cpp \
     src/ChatItemWidget.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
     src/mainwindow.cpp
 
 HEADERS += \
+    src/RecordItemWidget.h \
     src/FileItemWidget.h \
     src/ClientChatWidget.h \
     src/ChatItemWidget.h \
@@ -26,6 +28,7 @@ HEADERS += \
     src/mainwindow.h
 
 FORMS += \
+    ui/RecordItemWidget.ui \
     ui/FileItemWidget.ui \
     ui/ClientChatWidget.ui \
     ui/ChatItemWidget.ui \

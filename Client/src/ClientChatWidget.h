@@ -6,6 +6,8 @@
 #include <QTcpSocket>
 #include <QWidget>
 #include <QStatusBar>
+#include <QtMultimedia/QAudioProbe>
+#include <QtMultimedia/QAudioRecorder>
 
 namespace Ui {
 class ClientChatWidget;
@@ -33,17 +35,23 @@ signals:
 private slots:
     void on_btnSend_clicked();
 
-    void on_lnMessage_textChanged(const QString &arg1);
+    void on_lnMessage_textChanged();
 
     void on_lnMessage_returnPressed();
 
     void on_pushButton_clicked();
+
+    void on_recordBtn_clicked();
 
 private:
     Ui::ClientChatWidget *ui;
     QStatusBar *statusBar;
     ClientManager *_client;
     QString clientName;
+    QAudioRecorder *_audioRecorder = nullptr;
+    QAudioProbe *_audioProbe = nullptr;
+    bool isRecording = false;
+    void setupAudioProbe(QAudioRecorder *&audioRecorder, QAudioProbe *&audioProbe);
 };
 
 #endif // CLIENTCHATWIDGET_H

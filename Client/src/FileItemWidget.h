@@ -20,7 +20,7 @@ public:
     void setFileInfo(QString sender, QString fileName, qint64 fileSize, QByteArray fileData, bool isMyFile = false);
 
 private slots:
-    void on_fileButton_clicked();
+    void on_fileBtn_clicked();
 
 private:
     QString formatFileSize(qint64 size);

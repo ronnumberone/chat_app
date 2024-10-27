@@ -11,9 +11,7 @@ FileItemWidget::FileItemWidget(QWidget *parent)
     , ui(new Ui::FileItemWidget)
 {
     ui->setupUi(this);
-    ui->fileButton->setIcon(QIcon(":/icons/file.png"));
-    ui->fileButton->setIconSize(QSize(50, 50));
-    ui->fileButton->setFixedSize(QSize(50,50));
+    ui->fileBtn->setFixedSize(QSize(50, 50));
 }
 
 FileItemWidget::~FileItemWidget()
@@ -29,23 +27,12 @@ void FileItemWidget::setFileInfo(QString sender, QString fileName, qint64 fileSi
     ui->fileSizeLb->setText(formatFileSize(fileSize));
     ui->namelb->setText(sender + ", " + QTime::currentTime().toString("HH:mm"));
     if(isMyFile) {
+        ui->horizontalLayout->removeItem(ui->vLFileInfo);
+        ui->horizontalLayout->insertLayout(0, ui->vLFileInfo);
+        ui->fileNameLb->setAlignment(Qt::AlignRight);
+        ui->fileSizeLb->setAlignment(Qt::AlignRight);
         ui->namelb->setAlignment(Qt::AlignRight);
         ui->namelb->setText("You, " + QTime::currentTime().toString("HH:mm"));
-    }
-}
-
-void FileItemWidget::on_fileButton_clicked()
-{
-    QString downloadsPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-    QString savePath = QDir(downloadsPath).filePath(_fileName);
-
-    QFile file(savePath);
-    if (file.open(QIODevice::WriteOnly)) {
-        file.write(_fileData);
-        file.close();
-        QMessageBox::information(this, "Download Complete", "File has been downloaded successfully to " + savePath);
-    } else {
-        QMessageBox::warning(this, "Error", "Could not save the file.");
     }
 }
 
@@ -58,5 +45,21 @@ QString FileItemWidget::formatFileSize(qint64 size) {
         return QString::number(size / (1024.0 * 1024.0), 'f', 2) + " MB";
     else
         return QString::number(size / (1024.0 * 1024.0 * 1024.0), 'f', 2) + " GB";
+}
+
+
+void FileItemWidget::on_fileBtn_clicked()
+{
+    QString downloadsPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    QString savePath = QDir(downloadsPath).filePath(_fileName);
+
+    QFile file(savePath);
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(_fileData);
+        file.close();
+        QMessageBox::information(this, "Download Complete", "File has been downloaded successfully to " + savePath);
+    } else {
+        QMessageBox::warning(this, "Error", "Could not save the file.");
+    }
 }
 
