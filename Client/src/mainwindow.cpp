@@ -13,6 +13,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setupClient();
+
+    stackedWidget = new QStackedWidget(this);
+
+    startWidget = new StartWidget(_client, this);
+    connect(startWidget, &StartWidget::userSignedIn, this, &MainWindow::onUserSignedIn);
+
+    stackedWidget->addWidget(startWidget);
+    stackedWidget->addWidget(ui->centralwidget);
+    setCentralWidget(stackedWidget);
 }
 
 MainWindow::~MainWindow()
@@ -88,6 +97,16 @@ void MainWindow::onTyping(QString sender)
             }
             break;
         }
+    }
+}
+
+void MainWindow::onUserSignedIn(QString uid, QString email, bool firstLogin)
+{
+    _client->connectToServer();
+    stackedWidget->setCurrentWidget(ui->centralwidget);
+    if(firstLogin) {
+        _client->sendNewClient(uid, email);
+        qDebug() << uid << email;
     }
 }
 

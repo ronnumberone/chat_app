@@ -27,6 +27,10 @@ ClientChatWidget::ClientChatWidget(QTcpSocket *client, QWidget *parent) :
     connect(_client, &ClientManager::statusChanged, [this](ChatProtocol::Status status){
         emit statusChanged(status, _client->name());
     });
+
+    connect(_client, &ClientManager::newClient, this , [this](QString uid, QString email){
+        emit newClient(uid, email, _client->name());
+    });
     //connect(_client, &ClientManager::fileSaved, this, &ClientChatWidget::onFileSaved);
     //connect(ui->lnMessage, &QLineEdit::textChanged, _client, &ClientManager::sendIsTyping);
 

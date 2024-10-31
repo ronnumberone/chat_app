@@ -19,6 +19,7 @@ public:
     void sendStatus(ChatProtocol::Status status);
     void sendIsTyping(QString receiver);
     void sendFile(QString receiver, QString fileName);
+    void sendNewClient(QString uid, QString email);
 
     ChatProtocol _protocol;
 

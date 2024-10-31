@@ -85,4 +85,9 @@ void ClientManager::sendFile(QString receiver, QString fileName)
     _socket->write(_protocol.setFileMessage(receiver, fileName));
 }
 
+void ClientManager::sendNewClient(QString uid, QString email)
+{
+    _socket->write(_protocol.setNewClient(uid, email));
+}
+
 

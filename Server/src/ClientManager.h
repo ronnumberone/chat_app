@@ -40,6 +40,7 @@ signals:
     void initReceivingFile(QString clientName, QString fileName, qint64 fileSize);
     void fileSaved(QString path);
     void fileSend(QString receiver, QString fileName, qint64 fileSize, QByteArray fileData);
+    void newClient(QString uid, QString email);
 
 private slots:
     void readyRead();

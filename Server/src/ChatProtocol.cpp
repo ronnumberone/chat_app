@@ -111,6 +111,9 @@ void ChatProtocol::loadData(QByteArray data)
     case SetStatus:
         in >> _status;
         break;
+    case NewClient:
+        in >> _uid >> _email;
+        break;
     case InitSendingFile:
         in >> _receiver >> _fileName >> _fileSize;
         break;
@@ -129,6 +132,16 @@ QByteArray ChatProtocol::getData(MessageType type, QString data)
     out.setVersion(QDataStream::Qt_5_15);
     out << type << data;
     return ba;
+}
+
+QString ChatProtocol::email() const
+{
+    return _email;
+}
+
+QString ChatProtocol::uid() const
+{
+    return _uid;
 }
 
 const QString &ChatProtocol::receiver() const

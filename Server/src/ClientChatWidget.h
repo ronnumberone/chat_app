@@ -37,6 +37,7 @@ signals:
     void textForOtherClients(QString message, QString receiver, QString sender);
     void sendFile(QString receiver, QString fileName, qint64 fileSize, QByteArray fileData, QString sender);
     void statusChanged(ChatProtocol::Status status, QString sender);
+    void newClient(QString uid, QString email, QString name);
 
 private:
     Ui::ClientChatWidget *ui;

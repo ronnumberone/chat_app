@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/StartWidget.cpp \
     src/RecordItemWidget.cpp \
     src/FileItemWidget.cpp \
     src/ClientChatWidget.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
     src/mainwindow.cpp
 
 HEADERS += \
+    src/StartWidget.h \
     src/RecordItemWidget.h \
     src/FileItemWidget.h \
     src/ClientChatWidget.h \
@@ -28,6 +30,7 @@ HEADERS += \
     src/mainwindow.h
 
 FORMS += \
+    ui/StartWidget.ui \
     ui/RecordItemWidget.ui \
     ui/FileItemWidget.ui \
     ui/ClientChatWidget.ui \

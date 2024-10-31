@@ -40,6 +40,7 @@ public:
     QByteArray setAcceptFileMessage();
     QByteArray setRejectFileMessage();
     QByteArray setFileMessage(QString receiver, QString fileName);
+    QByteArray setNewClient(QString uid, QString email);
 
     void loadData(QByteArray data);
     const QString &message() const;

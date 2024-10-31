@@ -1,10 +1,14 @@
 #include "ServerManager.h"
 #include <QDebug>
+#include <QJsonDocument>
+#include <QNetworkReply>
+#include<QVariantMap>
 
 ServerManager::ServerManager(ushort port, QObject *parent)
     : QObject{parent}
 {
     setupServer(port);
+    m_networkManager = new QNetworkAccessManager(this);
 }
 
 void ServerManager::notifyOtherClients(QString prevName, QString name)
@@ -49,6 +53,22 @@ void ServerManager::onSetStatus(ChatProtocol::Status status, QString sender)
         cl->write(statusMessage);
     }
 }
+
+void ServerManager::onNewClient(QString uid, QString email, QString name)
+{
+    QVariantMap newClient;
+    newClient["email"] = email;
+    newClient["name"] = name;
+    newClient["uid"] = uid;
+
+    QJsonDocument jsonDoc = QJsonDocument::fromVariant(newClient);
+
+    QNetworkRequest newClientRequest(QUrl("https://qt-chat-app-default-rtdb.asia-southeast1.firebasedatabase.app/users/" + uid + ".json"));
+    newClientRequest.setHeader(QNetworkRequest::ContentTypeHeader, QString("application/json"));
+
+    m_networkManager->put(newClientRequest, jsonDoc.toJson());
+}
+
 
 void ServerManager::onClientTyping(QString sender, QString receiver)
 {

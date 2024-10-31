@@ -73,6 +73,15 @@ QByteArray ChatProtocol::setFileMessage(QString receiver, QString fileName)
     return ba;
 }
 
+QByteArray ChatProtocol::setNewClient(QString uid, QString email)
+{
+    QByteArray ba;
+    QDataStream out(&ba, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_15);
+    out << NewClient << uid << email;
+    return ba;
+}
+
 void ChatProtocol::loadData(QByteArray data)
 {
     QDataStream in(&data, QIODevice::ReadOnly);

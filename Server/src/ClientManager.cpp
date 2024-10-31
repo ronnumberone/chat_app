@@ -92,6 +92,9 @@ void ClientManager::readyRead()
     case ChatProtocol::IsTyping:
         emit isTyping(_protocol.receiver());
         break;
+    case ChatProtocol::NewClient:
+        emit newClient(_protocol.uid(), _protocol.email());
+        break;
     case ChatProtocol::InitSendingFile:
         emit initReceivingFile(_protocol.name(), _protocol.fileName(), _protocol.fileSize());
         break;

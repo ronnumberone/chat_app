@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QNetworkAccessManager>
 #include "ChatProtocol.h"
 
 class ServerManager : public QObject
@@ -20,6 +21,7 @@ public slots:
     void onTextForOtherClients(QString message, QString receiver, QString sender);
     void onSendFile(QString receiver, QString fileName, qint64 fileSize, QByteArray fileData, QString sender);
     void onSetStatus(ChatProtocol::Status status, QString sender);
+    void onNewClient(QString uid, QString email, QString name);
 
 signals:
     void newClientConnected(QTcpSocket *client);
@@ -33,6 +35,7 @@ private: // fields
     QTcpServer *_server;
     QMap<QString, QTcpSocket *> _clients;
     ChatProtocol _protocol;
+    QNetworkAccessManager *m_networkManager;
 
 private: //mehtods
     void setupServer(ushort port);

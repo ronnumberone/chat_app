@@ -55,6 +55,10 @@ public:
     const QByteArray &fileData() const;
     const QString &receiver() const;
 
+    QString uid() const;
+
+    QString email() const;
+
 private:
     QByteArray getData(MessageType type, QString data);
 
@@ -66,6 +70,8 @@ private:
     qint64 _fileSize;
     QByteArray _fileData;
     QString _receiver;
+    QString _uid;
+    QString _email;
 
 };
 

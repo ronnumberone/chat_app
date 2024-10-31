@@ -2,7 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStackedWidget>
 #include "ClientManager.h"
+#include "StartWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,6 +25,7 @@ private slots:
     void on_lnClientName_editingFinished();
     void on_cmbStatus_currentIndexChanged(int index);
     void onTyping(QString sender);
+    void onUserSignedIn(QString uid, QString email, bool firstLogin);
     //void on_btnSendFile_clicked();
     void onReceiveFile(QString sender, QString fileName, qint64 fileSize, QByteArray fileData);
     void onConnectionACK(QString myName, QStringList clientsName);
@@ -34,6 +37,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     ClientManager *_client;
+    QStackedWidget *stackedWidget;
+    StartWidget *startWidget;
     QString _myClientName;
     void setupClient();
 };
