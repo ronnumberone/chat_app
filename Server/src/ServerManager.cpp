@@ -13,6 +13,11 @@ ServerManager::ServerManager(ushort port, QObject *parent)
 
 void ServerManager::notifyOtherClients(QString prevName, QString name)
 {
+    if (_clientPublicKeys.contains(prevName)) {
+        QString publicKey = _clientPublicKeys.take(prevName);
+        _clientPublicKeys[name] = publicKey;
+    }
+
     auto message = _protocol.setClientNameMessage(prevName, name);
     foreach (auto cl, _clients) {
         auto clientName = cl->property("clientName").toString();
@@ -20,11 +25,16 @@ void ServerManager::notifyOtherClients(QString prevName, QString name)
             cl->write(message);
         }
     }
+
+    if (_clients.contains(prevName)) {
+        auto client = _clients.take(prevName);
+        _clients[name] = client;
+    }
 }
 
-void ServerManager::onTextForOtherClients(QString message, QString receiver, QString sender)
+void ServerManager::onTextForOtherClients(QByteArray encryptedAESKey, QByteArray encryptedMessage, QString receiver, QString sender)
 {
-    auto msg = _protocol.textMessage(message, sender);
+    auto msg = _protocol.textMessage(encryptedAESKey, encryptedMessage, sender);
     foreach (auto cl, _clients) {
         auto clientName = cl->property("clientName").toString();
         if (clientName == receiver) {
@@ -69,6 +79,18 @@ void ServerManager::onNewClient(QString uid, QString email, QString name)
     m_networkManager->put(newClientRequest, jsonDoc.toJson());
 }
 
+void ServerManager::onSendPublicKey(QString publicKey, QString sender)
+{
+    _clientPublicKeys[sender] = publicKey;
+    auto sendPublicKeyMessage = _protocol.setPublicKeyMessage(publicKey, sender);
+    foreach (auto cl, _clients) {
+        auto clientName = cl->property("clientName").toString();
+        if (clientName != sender) {
+            cl->write(sendPublicKeyMessage);
+        }
+    }
+}
+
 
 void ServerManager::onClientTyping(QString sender, QString receiver)
 {
@@ -94,13 +116,22 @@ void ServerManager::newClientConnectionReceived()
     emit newClientConnected(client);
 
     if (id > 1) {
-        auto message = _protocol.setConnectionACKMessage(clientName, _clients.keys());
+        QMap<QString, QString> publicKeys;
+        foreach (auto key, _clientPublicKeys.keys()) {
+            QString publicKey = _clientPublicKeys.value(key);
+            if(key != clientName) {
+                publicKeys[key] = publicKey;
+            }
+        }
+
+        auto message = _protocol.setConnectionACKMessage(clientName, _clients.keys(), publicKeys);
         client->write(message);
 
         auto newClientMessage = _protocol.setNewClientMessage(clientName);
         foreach (auto cl, _clients) {
             cl->write(newClientMessage);
         }
+
     }
     _clients[clientName] = client;
 }

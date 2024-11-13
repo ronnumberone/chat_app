@@ -34,10 +34,11 @@ private slots:
 signals:
     void clientNameChanged(QString prevName, QString name);
     void isTyping(QString message, QString sender, QString receiver);
-    void textForOtherClients(QString message, QString receiver, QString sender);
+    void textForOtherClients(QByteArray encryptedAESKey, const QByteArray encryptedMessage, QString receiver, QString sender);
     void sendFile(QString receiver, QString fileName, qint64 fileSize, QByteArray fileData, QString sender);
     void statusChanged(ChatProtocol::Status status, QString sender);
     void newClient(QString uid, QString email, QString name);
+    void sendPublicKey(QString publicKey, QString name);
 
 private:
     Ui::ClientChatWidget *ui;

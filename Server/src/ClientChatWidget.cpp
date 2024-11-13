@@ -13,8 +13,8 @@ ClientChatWidget::ClientChatWidget(QTcpSocket *client, QWidget *parent) :
     //    connect(_client, &QTcpSocket::readyRead, this, &ClientChatWidget::dataReceived);
     connect(_client, &ClientManager::disconnected, this, &ClientChatWidget::clientDisconnected);
 
-    connect(_client, &ClientManager::textMessageReceived, [this](QString message, QString receiver){
-        emit textForOtherClients(message, receiver, _client->name());
+    connect(_client, &ClientManager::textMessageReceived, [this](QByteArray encryptedAESKey, QByteArray encryptedMessage, QString receiver){
+        emit textForOtherClients(encryptedAESKey, encryptedMessage, receiver, _client->name());
     });
     connect(_client, &ClientManager::isTyping, this, &ClientChatWidget::onTyping);
 
@@ -36,6 +36,10 @@ ClientChatWidget::ClientChatWidget(QTcpSocket *client, QWidget *parent) :
 
     connect(_client, &ClientManager::fileSend, [this](QString receiver, QString fileName, qint64 fileSize, QByteArray fileData){
         emit sendFile(receiver, fileName, fileSize, fileData, _client->name());
+    });
+
+    connect(_client, &ClientManager::sendPublicKey, [this](QString publicKey){
+        emit sendPublicKey(publicKey, _client->name());
     });
 
     dir.mkdir(_client->name());
@@ -60,7 +64,7 @@ void ClientChatWidget::clientDisconnected()
 void ClientChatWidget::on_btnSend_clicked()
 {
     auto message = ui->lnMessage->text().trimmed();
-    _client->sendMessage(message);
+    //_client->sendMessage(message);
     ui->lnMessage->setText("");
     ui->lstMessages->addItem(message);
 }

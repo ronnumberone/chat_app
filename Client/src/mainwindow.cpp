@@ -5,7 +5,6 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDebug>
-#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -48,6 +47,7 @@ void MainWindow::setupClient()
     connect(_client, &ClientManager::newClientConnectedToServer, this, &MainWindow::onNewClientConnectedToServer);
     //onnect(_client, &ClientManager::clientDisconnected, this, &MainWindow::onClientDisconnected);
     connect(_client, &ClientManager::clientNameChanged, this, &MainWindow::onClientNameChanged);
+    connect(_client, &ClientManager::sendPublicKey, this, &MainWindow::onSendPublicKey);
 }
 
 void MainWindow::on_actionConnect_triggered()
@@ -55,9 +55,9 @@ void MainWindow::on_actionConnect_triggered()
     _client->connectToServer();
 }
 
-void MainWindow::sendMessage(QString message, QString receiver)
+void MainWindow::sendMessage(QString publicKey, QString message, QString receiver)
 {
-    _client->sendMessage(message, receiver);
+    _client->sendMessage(publicKey, message, receiver);
 }
 
 void MainWindow::dataReceived(QString message, QString sender)
@@ -197,6 +197,19 @@ void MainWindow::onStatusChanged(ChatProtocol::Status status, QString sender)
 
             auto icon = QIcon(iconName);
             ui->tbClients->setTabIcon(index, icon);
+            break;
+        }
+    }
+}
+
+void MainWindow::onSendPublicKey(QString publicKey, QString sender)
+{
+    for (int i = 0; i < ui->tbClients->count(); ++i) {
+        if (ui->tbClients->tabText(i) == sender) {
+            auto* chatWidget = qobject_cast<ClientChatWidget*>(ui->tbClients->widget(i));
+            if (chatWidget) {
+                chatWidget->setPublicKey(publicKey);
+            }
             break;
         }
     }

@@ -2,18 +2,19 @@
 #include <QDataStream>
 #include <QFileInfo>
 #include <QIODevice>
+#include <QMap>
 
 ChatProtocol::ChatProtocol()
 {
 
 }
 
-QByteArray ChatProtocol::textMessage(QString message, QString sender)
+QByteArray ChatProtocol::textMessage(QByteArray encryptedAESKey, QByteArray encryptedMessage, QString sender)
 {
     QByteArray ba;
     QDataStream out(&ba, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_15);
-    out << Text << message << sender;
+    out << Text << encryptedAESKey << encryptedMessage << sender;
     return ba;
 }
 
@@ -74,12 +75,12 @@ QByteArray ChatProtocol::setClientNameMessage(QString prevName, QString name)
     return ba;
 }
 
-QByteArray ChatProtocol::setConnectionACKMessage(QString clientName, QStringList otherClients)
+QByteArray ChatProtocol::setConnectionACKMessage(QString clientName, QStringList otherClients, QMap<QString, QString> publickeys)
 {
     QByteArray ba;
     QDataStream out(&ba, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_15);
-    out << ConnectionACK << clientName << otherClients;
+    out << ConnectionACK << clientName << otherClients << publickeys;
     return ba;
 }
 
@@ -100,7 +101,7 @@ void ChatProtocol::loadData(QByteArray data)
     in >> _type;
     switch (_type) {
     case Text:
-        in >> _receiver >> _message;
+        in >> _receiver >> _encryptedAESKey >> _encryptedMessage;
         break;
     case SetName:
         in >> _name;
@@ -120,6 +121,9 @@ void ChatProtocol::loadData(QByteArray data)
     case SendFile:
         in >> _receiver >> _fileName >> _fileSize >> _fileData;
         break;
+    case SetPublicKey:
+        in >> _publicKey;
+        break;
     default:
         break;
     }
@@ -132,6 +136,30 @@ QByteArray ChatProtocol::getData(MessageType type, QString data)
     out.setVersion(QDataStream::Qt_5_15);
     out << type << data;
     return ba;
+}
+
+QByteArray ChatProtocol::setPublicKeyMessage(QString publicKey, QString name)
+{
+    QByteArray ba;
+    QDataStream out(&ba, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_15);
+    out << SetPublicKey << publicKey << name;
+    return ba;
+}
+
+QString ChatProtocol::publicKey() const
+{
+    return _publicKey;
+}
+
+QByteArray ChatProtocol::encryptedAESKey() const
+{
+    return _encryptedAESKey;
+}
+
+QByteArray ChatProtocol::encryptedMessage() const
+{
+    return _encryptedMessage;
 }
 
 QString ChatProtocol::email() const
@@ -179,7 +207,3 @@ const QString &ChatProtocol::name() const
     return _name;
 }
 
-const QString &ChatProtocol::message() const
-{
-    return _message;
-}

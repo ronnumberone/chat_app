@@ -20,7 +20,7 @@ public:
 
 private slots:
     void on_actionConnect_triggered();
-    void sendMessage(QString message, QString receiver);
+    void sendMessage(QString publicKey, QString message, QString receiver);
     void dataReceived(QString message, QString sender);
     void on_lnClientName_editingFinished();
     void on_cmbStatus_currentIndexChanged(int index);
@@ -32,6 +32,7 @@ private slots:
     void onNewClientConnectedToServer(QString clientName);
     void onClientNameChanged(QString prevName, QString clientName);
     void onStatusChanged(ChatProtocol::Status status, QString sender);
+    void onSendPublicKey(QString publicKey, QString sender);
     //void onClientDisconnected(QString clientName);
 
 private:

@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <QString>
 #include <QStringList>
+#include <QMap>
 
 class ChatProtocol
 {
@@ -20,7 +21,8 @@ public:
         ClientName,
         ConnectionACK,
         NewClient,
-        ClientDisconnected
+        ClientDisconnected,
+        SetPublicKey
     };
 
     enum Status{
@@ -32,7 +34,7 @@ public:
 
     ChatProtocol();
 
-    QByteArray textMessage(QString message, QString receiver);
+    QByteArray textMessage(QByteArray encryptedAESKey, QByteArray message, QString receiver);
     QByteArray isTypingMessage(QString receiver);
     QByteArray setNameMessage(QString name);
     QByteArray setStatusMessage(Status status);
@@ -41,9 +43,9 @@ public:
     QByteArray setRejectFileMessage();
     QByteArray setFileMessage(QString receiver, QString fileName);
     QByteArray setNewClient(QString uid, QString email);
+    QByteArray setPublicKeyMessage(QString publicKey);
 
     void loadData(QByteArray data);
-    const QString &message() const;
     const QString &name() const;
     Status status() const;
     MessageType type() const;
@@ -58,11 +60,20 @@ public:
 
     QString sender() const;
 
+    QString publicKey() const;
+
+    QByteArray encryptedMessage() const;
+
+    QByteArray encryptedAESKey() const;
+
+    QMap<QString, QString> publicKeys() const;
+
 private:
     QByteArray getData(MessageType type, QString data);
 
     MessageType _type;
-    QString _message;
+    QByteArray _encryptedMessage;
+    QByteArray _encryptedAESKey;
     QString _name;
     Status _status;
     QString _fileName;
@@ -74,6 +85,8 @@ private:
     QString _prevName;
     QStringList _clientsName;
     QString _myName;
+    QString _publicKey;
+    QMap<QString, QString> _publicKeys;
 
 };
 

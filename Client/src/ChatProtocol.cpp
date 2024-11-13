@@ -10,12 +10,12 @@ ChatProtocol::ChatProtocol()
 
 }
 
-QByteArray ChatProtocol::textMessage(QString message, QString receiver)
+QByteArray ChatProtocol::textMessage(QByteArray encryptedAESKey, QByteArray encryptedMessage, QString receiver)
 {
     QByteArray ba;
     QDataStream out(&ba, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_15);
-    out << Text << receiver << message;
+    out << Text << receiver << encryptedAESKey << encryptedMessage;
     return ba;
 }
 
@@ -82,6 +82,11 @@ QByteArray ChatProtocol::setNewClient(QString uid, QString email)
     return ba;
 }
 
+QByteArray ChatProtocol::setPublicKeyMessage(QString publicKey)
+{
+    return getData(SetPublicKey, publicKey);
+}
+
 void ChatProtocol::loadData(QByteArray data)
 {
     QDataStream in(&data, QIODevice::ReadOnly);
@@ -89,7 +94,7 @@ void ChatProtocol::loadData(QByteArray data)
     in >> _type;
     switch (_type) {
     case Text:
-        in  >> _message >> _sender;
+        in  >> _encryptedAESKey >> _encryptedMessage >> _sender;
         break;
     case SetName:
         in >> _name;
@@ -114,7 +119,10 @@ void ChatProtocol::loadData(QByteArray data)
         in >> _clientName;
         break;
     case ConnectionACK:
-        in >> _myName >> _clientsName;
+        in >> _myName >> _clientsName >> _publicKeys;
+        break;
+    case SetPublicKey:
+        in >> _publicKey >> _sender;
         break;
     default:
         break;
@@ -128,6 +136,26 @@ QByteArray ChatProtocol::getData(MessageType type, QString data)
     out.setVersion(QDataStream::Qt_5_15);
     out << type << data;
     return ba;
+}
+
+QMap<QString, QString> ChatProtocol::publicKeys() const
+{
+    return _publicKeys;
+}
+
+QByteArray ChatProtocol::encryptedAESKey() const
+{
+    return _encryptedAESKey;
+}
+
+QByteArray ChatProtocol::encryptedMessage() const
+{
+    return _encryptedMessage;
+}
+
+QString ChatProtocol::publicKey() const
+{
+    return _publicKey;
 }
 
 QString ChatProtocol::sender() const
@@ -188,9 +216,4 @@ ChatProtocol::Status ChatProtocol::status() const
 const QString &ChatProtocol::name() const
 {
     return _name;
-}
-
-const QString &ChatProtocol::message() const
-{
-    return _message;
 }

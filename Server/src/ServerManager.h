@@ -18,10 +18,11 @@ public:
     void onClientTyping(QString sender, QString receiver);
 
 public slots:
-    void onTextForOtherClients(QString message, QString receiver, QString sender);
+    void onTextForOtherClients(QByteArray encryptedAESKey, QByteArray encryptedMessage, QString receiver, QString sender);
     void onSendFile(QString receiver, QString fileName, qint64 fileSize, QByteArray fileData, QString sender);
     void onSetStatus(ChatProtocol::Status status, QString sender);
     void onNewClient(QString uid, QString email, QString name);
+    void onSendPublicKey(QString publicKey, QString sender);
 
 signals:
     void newClientConnected(QTcpSocket *client);
@@ -34,6 +35,7 @@ private slots:
 private: // fields
     QTcpServer *_server;
     QMap<QString, QTcpSocket *> _clients;
+    QMap<QString, QString> _clientPublicKeys;
     ChatProtocol _protocol;
     QNetworkAccessManager *m_networkManager;
 

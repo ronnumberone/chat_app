@@ -27,8 +27,12 @@ public:
     void fileReceived(QString sender, QString fileName, qint64 fileSize, QByteArray fileData);
     void setClientName(const QString &newClientName);
 
+    void setPublicKey(const QString &newPublicKey);
+
+    QString getPublicKey() const;
+
 signals:
-    void sendMessage(QString message, QString receiver);
+    void sendMessage(QString publicKey, QString message, QString receiver);
     void isTyping(QString receiver);
     void sendFile(QString receiver, QString fileName);
 
@@ -48,6 +52,7 @@ private:
     QStatusBar *statusBar;
     ClientManager *_client;
     QString clientName;
+    QString publicKey = "";
     QAudioRecorder *_audioRecorder = nullptr;
     QAudioProbe *_audioProbe = nullptr;
     bool isRecording = false;

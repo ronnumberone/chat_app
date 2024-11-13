@@ -18,7 +18,7 @@ public:
     void connectToServer();
     void disconnectFromHost();
 
-    void sendMessage(QString message);
+    //void sendMessage(QString message);
     void sendName(QString name);
     void sendStatus(ChatProtocol::Status status);
     QString name() const;
@@ -32,7 +32,7 @@ signals:
     void connected();
     void disconnected();
     //    void dataReceived(QByteArray data);
-    void textMessageReceived(const QString message, QString receiver);
+    void textMessageReceived(QByteArray encryptedAESKey, const QByteArray encryptedMessage, QString receiver);
     void isTyping(QString receiver);
     void nameChanged(QString prevName, QString name);
     void statusChanged(ChatProtocol::Status status);
@@ -41,6 +41,7 @@ signals:
     void fileSaved(QString path);
     void fileSend(QString receiver, QString fileName, qint64 fileSize, QByteArray fileData);
     void newClient(QString uid, QString email);
+    void sendPublicKey(QString publicKey);
 
 private slots:
     void readyRead();

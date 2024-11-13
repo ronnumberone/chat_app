@@ -19,7 +19,8 @@ public:
         ClientName,
         ConnectionACK,
         NewClient,
-        ClientDisconnected
+        ClientDisconnected,
+        SetPublicKey
     };
 
     enum Status{
@@ -31,7 +32,7 @@ public:
 
     ChatProtocol();
 
-    QByteArray textMessage(QString message, QString sender);
+    QByteArray textMessage(QByteArray encryptedAESKey, QByteArray encryptedMessage, QString sender);
     QByteArray isTypingMessage(QString sender);
     QByteArray setNameMessage(QString name);
     QByteArray setStatusMessage(Status status, QString sender);
@@ -41,12 +42,12 @@ public:
     QByteArray setFileMessage(QString sender, QString fileName, qint64 fileSize, QByteArray fileData);
 
     QByteArray setClientNameMessage(QString prevName, QString name);
-    QByteArray setConnectionACKMessage(QString clientName, QStringList otherClients);
+    QByteArray setConnectionACKMessage(QString clientName, QStringList otherClients, QMap<QString, QString> publickeys);
     QByteArray setNewClientMessage(QString clientName);
     QByteArray setClinetDisconnectedMessage(QString clientName);
+    QByteArray setPublicKeyMessage(QString publicKey, QString name);
 
     void loadData(QByteArray data);
-    const QString &message() const;
     const QString &name() const;
     Status status() const;
     MessageType type() const;
@@ -59,11 +60,18 @@ public:
 
     QString email() const;
 
+    QString publicKey() const;
+
+    QByteArray encryptedMessage() const;
+
+    QByteArray encryptedAESKey() const;
+
 private:
     QByteArray getData(MessageType type, QString data);
 
     MessageType _type;
-    QString _message;
+    QByteArray _encryptedMessage;
+    QByteArray _encryptedAESKey;
     QString _name;
     Status _status;
     QString _fileName;
@@ -72,6 +80,7 @@ private:
     QString _receiver;
     QString _uid;
     QString _email;
+    QString _publicKey;
 
 };
 

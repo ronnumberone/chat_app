@@ -28,10 +28,10 @@ void ClientManager::disconnectFromHost()
     _socket->disconnectFromHost();
 }
 
-void ClientManager::sendMessage(QString message)
-{
-    _socket->write(_protocol.textMessage(message, "Server"));
-}
+// void ClientManager::sendMessage(QString message)
+// {
+//     _socket->write(_protocol.textMessage(message, "Server"));
+// }
 
 void ClientManager::sendName(QString name)
 {
@@ -78,7 +78,7 @@ void ClientManager::readyRead()
     _protocol.loadData(data);
     switch (_protocol.type()) {
     case ChatProtocol::Text:
-        emit textMessageReceived(_protocol.message(), _protocol.receiver());
+        emit textMessageReceived(_protocol.encryptedAESKey(), _protocol.encryptedMessage(), _protocol.receiver());
         break;
     case ChatProtocol::SetName:{
         auto prevName = _socket->property("clientName").toString();
@@ -107,6 +107,9 @@ void ClientManager::readyRead()
     case ChatProtocol::SendFile:
         emit fileSend(_protocol.receiver(), _protocol.fileName(), _protocol.fileSize(), _protocol.fileData());
         saveFile();
+        break;
+    case ChatProtocol::SetPublicKey:
+        emit sendPublicKey(_protocol.publicKey());
         break;
     default:
         break;

@@ -37,6 +37,11 @@ FORMS += \
     ui/ChatItemWidget.ui \
     ui/mainwindow.ui
 
+LIBS += $$PWD/openssl/libcrypto.a -lws2_32 -lcrypt32
+LIBS += $$PWD/openssl/libssl.a
+
+INCLUDEPATH += $$PWD/openssl
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

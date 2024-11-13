@@ -24,7 +24,7 @@ ClientChatWidget::~ClientChatWidget()
 void ClientChatWidget::on_btnSend_clicked()
 {
     if(ui->lnMessage->text().trimmed() != ""){
-        emit sendMessage(ui->lnMessage->text().trimmed(), clientName);
+        emit sendMessage(getPublicKey(), ui->lnMessage->text().trimmed(), clientName);
         auto chatWidget = new ChatItemWidget();
         chatWidget->setMessage(ui->lnMessage->text().trimmed(), "", true);
         ui->lnMessage->setText("");
@@ -97,7 +97,7 @@ void ClientChatWidget::on_pushButton_clicked()
 void ClientChatWidget::on_lnMessage_returnPressed()
 {
     if(ui->lnMessage->text().trimmed() != ""){
-        emit sendMessage(ui->lnMessage->text().trimmed(), clientName);
+        emit sendMessage(getPublicKey(), ui->lnMessage->text().trimmed(), clientName);
         auto chatWidget = new ChatItemWidget(this);
         chatWidget->setMessage(ui->lnMessage->text().trimmed(), "", true);
         ui->lnMessage->setText("");
@@ -146,6 +146,16 @@ void ClientChatWidget::on_recordBtn_clicked()
 
         emit sendFile(clientName, fileName);
     }
+}
+
+QString ClientChatWidget::getPublicKey() const
+{
+    return publicKey;
+}
+
+void ClientChatWidget::setPublicKey(const QString &newPublicKey)
+{
+    publicKey = newPublicKey;
 }
 
 void ClientChatWidget::setupAudioProbe(QAudioRecorder *&audioRecorder, QAudioProbe *&audioProbe)
