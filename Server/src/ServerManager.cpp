@@ -142,19 +142,6 @@ void ServerManager::onNewClient(QString uid, QString email, QString loginStatus,
     }
 }
 
-void ServerManager::onSendPublicKey(QString publicKey, QString sender)
-{
-    _clientPublicKeys[sender] = publicKey;
-    auto sendPublicKeyMessage = _protocol.setPublicKeyMessage(publicKey, sender);
-    foreach (auto cl, _clients) {
-        auto clientName = cl->property("clientName").toString();
-        if (clientName != sender) {
-            cl->write(sendPublicKeyMessage);
-        }
-    }
-}
-
-
 void ServerManager::onClientTyping(QString sender, QString receiver)
 {
     auto typingMessage = _protocol.isTypingMessage(sender);

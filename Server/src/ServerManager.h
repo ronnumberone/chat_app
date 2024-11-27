@@ -22,7 +22,6 @@ public slots:
     void onSendFile(QString receiver, QString fileName, qint64 fileSize, QByteArray fileData, QString sender);
     void onSetStatus(ChatProtocol::Status status, QString sender);
     void onNewClient(QString uid, QString email, QString loginStatus, QString publicKey);
-    void onSendPublicKey(QString publicKey, QString sender);
 
 signals:
     void newClientConnected(QTcpSocket *client);

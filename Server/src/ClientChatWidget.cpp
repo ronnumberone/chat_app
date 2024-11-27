@@ -38,10 +38,6 @@ ClientChatWidget::ClientChatWidget(QTcpSocket *client, QWidget *parent) :
         emit sendFile(receiver, fileName, fileSize, fileData, _client->name());
     });
 
-    connect(_client, &ClientManager::sendPublicKey, [this](QString publicKey){
-        emit sendPublicKey(publicKey, _client->name());
-    });
-
     //dir.mkdir(_client->name());
     //dir.setPath("./" + _client->name());
 }

@@ -22,7 +22,6 @@ public:
         ConnectionACK,
         NewClient,
         ClientDisconnected,
-        SetPublicKey
     };
 
     enum Status{
@@ -43,8 +42,6 @@ public:
     QByteArray setRejectFileMessage();
     QByteArray setFileMessage(QString receiver, QString fileName);
     QByteArray setNewClient(QString uid, QString email, QString loginStatus, QString publicKey);
-    QByteArray setPublicKeyMessage(QString publicKey);
-
     void loadData(QByteArray data);
     const QString &name() const;
     Status status() const;

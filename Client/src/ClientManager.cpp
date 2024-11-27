@@ -126,9 +126,6 @@ void ClientManager::readyRead()
     case ChatProtocol::ClientName:
         emit clientNameChanged(_protocol.prevName(), _protocol.clientName());
         break;
-    case ChatProtocol::SetPublicKey:
-        emit sendPublicKey(_protocol.publicKey(), _protocol.sender());
-        break;
     default:
         break;
     }
@@ -143,7 +140,6 @@ void ClientManager::setupClient()
 {
     _socket = new QTcpSocket(this);
     connect(_socket, &QTcpSocket::connected, [this]() {
-        //_socket->write(_protocol.setPublicKeyMessage(getPublicKeyPEM()));
         emit setPublicKey(getPublicKeyPEM());
         emit connected();
     });

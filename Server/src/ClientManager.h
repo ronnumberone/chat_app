@@ -41,7 +41,6 @@ signals:
     void fileSaved(QString path);
     void fileSend(QString receiver, QString fileName, qint64 fileSize, QByteArray fileData);
     void newClient(QString uid, QString email, QString loginStatus, QString publicKey);
-    void sendPublicKey(QString publicKey);
 
 private slots:
     void readyRead();

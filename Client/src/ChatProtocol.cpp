@@ -82,11 +82,6 @@ QByteArray ChatProtocol::setNewClient(QString uid, QString email, QString loginS
     return ba;
 }
 
-QByteArray ChatProtocol::setPublicKeyMessage(QString publicKey)
-{
-    return getData(SetPublicKey, publicKey);
-}
-
 void ChatProtocol::loadData(QByteArray data)
 {
     QDataStream in(&data, QIODevice::ReadOnly);
@@ -122,9 +117,6 @@ void ChatProtocol::loadData(QByteArray data)
         break;
     case ConnectionACK:
         in >> _myName >> _clientsName >> _publicKeys;
-        break;
-    case SetPublicKey:
-        in >> _publicKey >> _sender;
         break;
     default:
         break;

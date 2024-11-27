@@ -107,9 +107,6 @@ void ClientManager::readyRead()
         emit fileSend(_protocol.receiver(), _protocol.fileName(), _protocol.fileSize(), _protocol.fileData());
         //saveFile();
         break;
-    case ChatProtocol::SetPublicKey:
-        emit sendPublicKey(_protocol.publicKey());
-        break;
     default:
         break;
     }

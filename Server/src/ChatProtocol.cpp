@@ -126,9 +126,6 @@ void ChatProtocol::loadData(QByteArray data)
     case SendFile:
         in >> _receiver >> _fileName >> _fileSize >> _fileData;
         break;
-    case SetPublicKey:
-        in >> _publicKey;
-        break;
     default:
         break;
     }
