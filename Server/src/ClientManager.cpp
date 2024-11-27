@@ -45,9 +45,7 @@ void ClientManager::sendStatus(ChatProtocol::Status status)
 
 QString ClientManager::name() const
 {
-    auto id = _socket->property("id").toInt();
-    auto name = _protocol.name().length() > 0 ? _protocol.name() : QString("Client (%1)").arg(id);
-
+    auto name = _protocol.name().length() > 0 ? _protocol.name() : _socket->property("clientName").toString();
     return name;
 }
 
@@ -93,7 +91,8 @@ void ClientManager::readyRead()
         emit isTyping(_protocol.receiver());
         break;
     case ChatProtocol::NewClient:
-        emit newClient(_protocol.uid(), _protocol.email());
+        emit newClient(_protocol.uid(), _protocol.email(), _protocol.loginStatus(), _protocol.publicKey());
+        //emit sendPublicKey(_protocol.publicKey());
         break;
     case ChatProtocol::InitSendingFile:
         emit initReceivingFile(_protocol.name(), _protocol.fileName(), _protocol.fileSize());
@@ -106,7 +105,7 @@ void ClientManager::readyRead()
         break;
     case ChatProtocol::SendFile:
         emit fileSend(_protocol.receiver(), _protocol.fileName(), _protocol.fileSize(), _protocol.fileData());
-        saveFile();
+        //saveFile();
         break;
     case ChatProtocol::SetPublicKey:
         emit sendPublicKey(_protocol.publicKey());

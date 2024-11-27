@@ -42,7 +42,7 @@ public:
     QByteArray setAcceptFileMessage();
     QByteArray setRejectFileMessage();
     QByteArray setFileMessage(QString receiver, QString fileName);
-    QByteArray setNewClient(QString uid, QString email);
+    QByteArray setNewClient(QString uid, QString email, QString loginStatus, QString publicKey);
     QByteArray setPublicKeyMessage(QString publicKey);
 
     void loadData(QByteArray data);

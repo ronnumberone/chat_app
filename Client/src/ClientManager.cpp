@@ -76,9 +76,9 @@ void ClientManager::sendFile(QString receiver, QString fileName)
     _socket->write(_protocol.setFileMessage(receiver, fileName));
 }
 
-void ClientManager::sendNewClient(QString uid, QString email)
+void ClientManager::sendNewClient(QString uid, QString email, QString loginStatus, QString publicKey)
 {
-    _socket->write(_protocol.setNewClient(uid, email));
+    _socket->write(_protocol.setNewClient(uid, email, loginStatus, publicKey));
 }
 
 void ClientManager::readyRead()
@@ -118,6 +118,7 @@ void ClientManager::readyRead()
     }
     case ChatProtocol::NewClient:
         emit newClientConnectedToServer(_protocol.clientName());
+        emit sendPublicKey(_protocol.publicKey(), _protocol.clientName());
         break;
     case ChatProtocol::ClientDisconnected:
         emit clientDisconnected(_protocol.clientName());
@@ -133,11 +134,17 @@ void ClientManager::readyRead()
     }
 }
 
+QTcpSocket *ClientManager::socket() const
+{
+    return _socket;
+}
+
 void ClientManager::setupClient()
 {
     _socket = new QTcpSocket(this);
     connect(_socket, &QTcpSocket::connected, [this]() {
-        _socket->write(_protocol.setPublicKeyMessage(getPublicKeyPEM()));
+        //_socket->write(_protocol.setPublicKeyMessage(getPublicKeyPEM()));
+        emit setPublicKey(getPublicKeyPEM());
         emit connected();
     });
     connect(_socket, &QTcpSocket::disconnected, this, &ClientManager::disconnected);

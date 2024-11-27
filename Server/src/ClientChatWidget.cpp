@@ -28,8 +28,8 @@ ClientChatWidget::ClientChatWidget(QTcpSocket *client, QWidget *parent) :
         emit statusChanged(status, _client->name());
     });
 
-    connect(_client, &ClientManager::newClient, this , [this](QString uid, QString email){
-        emit newClient(uid, email, _client->name());
+    connect(_client, &ClientManager::newClient, this , [this](QString uid, QString email, QString loginStatus, QString publicKey){
+        emit newClient(uid, email, loginStatus, publicKey);
     });
     //connect(_client, &ClientManager::fileSaved, this, &ClientChatWidget::onFileSaved);
     //connect(ui->lnMessage, &QLineEdit::textChanged, _client, &ClientManager::sendIsTyping);
@@ -42,8 +42,8 @@ ClientChatWidget::ClientChatWidget(QTcpSocket *client, QWidget *parent) :
         emit sendPublicKey(publicKey, _client->name());
     });
 
-    dir.mkdir(_client->name());
-    dir.setPath("./" + _client->name());
+    //dir.mkdir(_client->name());
+    //dir.setPath("./" + _client->name());
 }
 
 void ClientChatWidget::disconnect()

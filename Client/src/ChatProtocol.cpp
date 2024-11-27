@@ -73,12 +73,12 @@ QByteArray ChatProtocol::setFileMessage(QString receiver, QString fileName)
     return ba;
 }
 
-QByteArray ChatProtocol::setNewClient(QString uid, QString email)
+QByteArray ChatProtocol::setNewClient(QString uid, QString email, QString loginStatus, QString publicKey)
 {
     QByteArray ba;
     QDataStream out(&ba, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_15);
-    out << NewClient << uid << email;
+    out << NewClient << uid << email << loginStatus << publicKey;
     return ba;
 }
 
@@ -115,6 +115,8 @@ void ChatProtocol::loadData(QByteArray data)
         in >> _prevName >> _clientName;
         break;
     case NewClient:
+        in >> _clientName >> _publicKey;
+        break;
     case ClientDisconnected:
         in >> _clientName;
         break;

@@ -43,7 +43,7 @@ public:
 
     QByteArray setClientNameMessage(QString prevName, QString name);
     QByteArray setConnectionACKMessage(QString clientName, QStringList otherClients, QMap<QString, QString> publickeys);
-    QByteArray setNewClientMessage(QString clientName);
+    QByteArray setNewClientMessage(QString clientName, QString publicKey);
     QByteArray setClinetDisconnectedMessage(QString clientName);
     QByteArray setPublicKeyMessage(QString publicKey, QString name);
 
@@ -66,6 +66,8 @@ public:
 
     QByteArray encryptedAESKey() const;
 
+    QString loginStatus() const;
+
 private:
     QByteArray getData(MessageType type, QString data);
 
@@ -80,6 +82,7 @@ private:
     QString _receiver;
     QString _uid;
     QString _email;
+    QString _loginStatus;
     QString _publicKey;
 
 };

@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QIODevice>
 #include <QMap>
+#include <QDebug>
 
 ChatProtocol::ChatProtocol()
 {
@@ -84,9 +85,13 @@ QByteArray ChatProtocol::setConnectionACKMessage(QString clientName, QStringList
     return ba;
 }
 
-QByteArray ChatProtocol::setNewClientMessage(QString clientName)
+QByteArray ChatProtocol::setNewClientMessage(QString clientName, QString publicKey)
 {
-    return getData(NewClient, clientName);
+    QByteArray ba;
+    QDataStream out(&ba, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_15);
+    out << NewClient << clientName << publicKey;
+    return ba;
 }
 
 QByteArray ChatProtocol::setClinetDisconnectedMessage(QString clientName)
@@ -113,7 +118,7 @@ void ChatProtocol::loadData(QByteArray data)
         in >> _status;
         break;
     case NewClient:
-        in >> _uid >> _email;
+        in >> _uid >> _email >> _loginStatus >>_publicKey;
         break;
     case InitSendingFile:
         in >> _receiver >> _fileName >> _fileSize;
@@ -136,6 +141,11 @@ QByteArray ChatProtocol::getData(MessageType type, QString data)
     out.setVersion(QDataStream::Qt_5_15);
     out << type << data;
     return ba;
+}
+
+QString ChatProtocol::loginStatus() const
+{
+    return _loginStatus;
 }
 
 QByteArray ChatProtocol::setPublicKeyMessage(QString publicKey, QString name)

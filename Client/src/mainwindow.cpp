@@ -102,12 +102,18 @@ void MainWindow::onTyping(QString sender)
 
 void MainWindow::onUserSignedIn(QString uid, QString email, bool firstLogin)
 {
+    connect(_client, &ClientManager::setPublicKey, [this, uid, email, firstLogin](QString publicKey) {
+        _client->sendNewClient(uid, email, firstLogin ? "REGISTER" : "LOGIN", publicKey);
+    });
+
+    // connect(_client->socket(), &QTcpSocket::connected, this, [this, uid, email, firstLogin, sentPublicKey]() {
+    //     _client->sendNewClient(uid, email, firstLogin ? "REGISTER" : "LOGIN", sentPublicKey);
+    //     qDebug() << "Sending" << (firstLogin ? "REGISTER:" : "LOGIN:") << uid << email;
+    // });
+
+    // Kết nối đến server
     _client->connectToServer();
     stackedWidget->setCurrentWidget(ui->centralwidget);
-    if(firstLogin) {
-        _client->sendNewClient(uid, email);
-        qDebug() << uid << email;
-    }
 }
 
 void MainWindow::onReceiveFile(QString sender, QString fileName, qint64 fileSize, QByteArray fileData)
@@ -214,3 +220,4 @@ void MainWindow::onSendPublicKey(QString publicKey, QString sender)
         }
     }
 }
+

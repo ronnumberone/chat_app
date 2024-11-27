@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     src/ClientChatWidget.cpp \
+    src/DatabaseManager.cpp \
     src/ServerManager.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     src/ClientChatWidget.h \
+    src/DatabaseManager.h \
     src/ServerManager.h \
     src/mainwindow.h \
     src/ChatProtocol.h \

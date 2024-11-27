@@ -37,13 +37,12 @@ signals:
     void textForOtherClients(QByteArray encryptedAESKey, const QByteArray encryptedMessage, QString receiver, QString sender);
     void sendFile(QString receiver, QString fileName, qint64 fileSize, QByteArray fileData, QString sender);
     void statusChanged(ChatProtocol::Status status, QString sender);
-    void newClient(QString uid, QString email, QString name);
+    void newClient(QString uid, QString email, QString loginStatus, QString publicKey);
     void sendPublicKey(QString publicKey, QString name);
 
 private:
     Ui::ClientChatWidget *ui;
     ClientManager *_client;
-    QDir dir;
 };
 
 #endif // CLIENTCHATWIDGET_H

@@ -24,9 +24,11 @@ public:
     void sendStatus(ChatProtocol::Status status);
     void sendIsTyping(QString receiver);
     void sendFile(QString receiver, QString fileName);
-    void sendNewClient(QString uid, QString email);
+    void sendNewClient(QString uid, QString email, QString loginStatus, QString publicKey);
 
     ChatProtocol _protocol;
+
+    QTcpSocket *socket() const;
 
 signals:
     void connected();
@@ -43,6 +45,7 @@ signals:
     void clientNameChanged(QString prevName, QString clientName);
     void clientDisconnected(QString clientName);
     void sendPublicKey(QString publicKey, QString sender);
+    void setPublicKey(QString publicKey);
 
 private slots:
     void readyRead();
