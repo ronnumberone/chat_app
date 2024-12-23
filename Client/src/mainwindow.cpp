@@ -5,6 +5,12 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDebug>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -14,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     setupClient();
 
     stackedWidget = new QStackedWidget(this);
+
+    networkManager = new QNetworkAccessManager(this);
 
     startWidget = new StartWidget(_client, this);
     connect(startWidget, &StartWidget::userSignedIn, this, &MainWindow::onUserSignedIn);
@@ -62,16 +70,57 @@ void MainWindow::sendMessage(QString publicKey, QString message, QString receive
 
 void MainWindow::dataReceived(QString message, QString sender)
 {
+    ClientChatWidget* chatWidget;
     for (int i = 0; i < ui->tbClients->count(); ++i) {
         QString tabReceiver = ui->tbClients->tabText(i);
         if (tabReceiver == sender) {
-            ClientChatWidget* chatWidget = qobject_cast<ClientChatWidget*>(ui->tbClients->widget(i));
+            chatWidget = qobject_cast<ClientChatWidget*>(ui->tbClients->widget(i));
             if (chatWidget) {
                 chatWidget->dataReceived(message, sender);
             }
             break;
         }
     }
+
+    QUrl url("http://localhost:5005/webhooks/rest/webhook");
+
+    QJsonObject json;
+    json["sender"] = sender;  // REST API sử dụng "sender" thay vì "recipient_id"
+    json["message"] = message;
+
+    QJsonDocument doc(json);
+    QByteArray data = doc.toJson();
+
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QNetworkReply *reply = networkManager->post(request, data);
+
+    connect(reply, &QNetworkReply::finished, this, [reply, chatWidget]() {
+        if (reply->error() != QNetworkReply::NoError) {
+            qDebug() << "Error:" << reply->errorString();
+            reply->deleteLater();
+            return;
+        }
+
+        QByteArray response = reply->readAll();
+
+        QJsonDocument responseDoc = QJsonDocument::fromJson(response);
+        if (responseDoc.isArray()) {
+            QJsonArray responseArray = responseDoc.array();
+            for (const QJsonValue &value : responseArray) {
+                if (value.isObject()) {
+                    QJsonObject obj = value.toObject();
+                    if (obj.contains("text")) {
+                        QString botMessage = obj["text"].toString();
+                        if(!botMessage.isEmpty()) chatWidget->suggestionReceived(botMessage);
+                    }
+                }
+            }
+        }
+
+        reply->deleteLater();
+    });
 }
 
 void MainWindow::on_lnClientName_editingFinished()

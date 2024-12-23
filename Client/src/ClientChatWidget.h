@@ -26,6 +26,7 @@ public:
     void onTyping(QString sender);
     void fileReceived(QString sender, QString fileName, qint64 fileSize, QByteArray fileData);
     void setClientName(const QString &newClientName);
+    void suggestionReceived(QString message);
 
     void setPublicKey(const QString &newPublicKey);
 
@@ -46,6 +47,8 @@ private slots:
     void on_pushButton_clicked();
 
     void on_recordBtn_clicked();
+
+    void on_suggestBtn_clicked();
 
 private:
     Ui::ClientChatWidget *ui;

@@ -39,6 +39,7 @@ private:
     Ui::MainWindow *ui;
     ClientManager *_client;
     QStackedWidget *stackedWidget;
+    QNetworkAccessManager *networkManager;
     StartWidget *startWidget;
     QString _myClientName;
     void setupClient();

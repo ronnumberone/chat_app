@@ -14,6 +14,7 @@ ClientChatWidget::ClientChatWidget(QString clientName, QWidget *parent)
 
     statusBar = new QStatusBar(this);
     ui->verticalLayout->addWidget(statusBar);
+    ui->suggestBtn->setVisible(false);
 }
 
 ClientChatWidget::~ClientChatWidget()
@@ -34,6 +35,7 @@ void ClientChatWidget::on_btnSend_clicked()
         listWidgetItem->setSizeHint(QSize(0, 60));
         ui->lstMessages->addItem(listWidgetItem);
         ui->lstMessages->setItemWidget(listWidgetItem, chatWidget);
+        ui->suggestBtn->setVisible(false);
     }
 }
 
@@ -46,6 +48,19 @@ void ClientChatWidget::dataReceived(QString message, QString sender)
     ui->lstMessages->addItem(listWidgetItem);
     listWidgetItem->setBackground(QColor(173, 215, 227));
     ui->lstMessages->setItemWidget(listWidgetItem, chatWidget);
+}
+
+void ClientChatWidget::suggestionReceived(QString message)
+{
+    ui->suggestBtn->setVisible(true);
+    ui->suggestBtn->setText(message);
+    ui->suggestBtn->adjustSize();
+}
+
+void ClientChatWidget::on_suggestBtn_clicked()
+{
+    ui->lnMessage->setText(ui->suggestBtn->text());
+    ui->lnMessage->setFocus();
 }
 
 void ClientChatWidget::onTyping(QString sender)
@@ -107,6 +122,7 @@ void ClientChatWidget::on_lnMessage_returnPressed()
         listWidgetItem->setSizeHint(QSize(0, 60));
         ui->lstMessages->addItem(listWidgetItem);
         ui->lstMessages->setItemWidget(listWidgetItem, chatWidget);
+        ui->suggestBtn->setVisible(false);
     }
 }
 

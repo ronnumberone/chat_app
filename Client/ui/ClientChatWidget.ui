@@ -18,6 +18,30 @@
     <widget class="QListWidget" name="lstMessages"/>
    </item>
    <item>
+    <widget class="QPushButton" name="suggestBtn">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>500</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>PushButton</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QWidget" name="wdgSendMessage" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0,0,0">
       <item>
