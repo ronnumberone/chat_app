@@ -35,6 +35,8 @@ private slots:
     void onSendPublicKey(QString publicKey, QString sender);
     //void onClientDisconnected(QString clientName);
 
+    void on_actionAdd_group_chat_triggered();
+
 private:
     Ui::MainWindow *ui;
     ClientManager *_client;

@@ -2,6 +2,7 @@
 #include "ClientChatWidget.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "GroupChatDialog.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDebug>
@@ -62,6 +63,22 @@ void MainWindow::on_actionConnect_triggered()
 {
     _client->connectToServer();
 }
+
+void MainWindow::on_actionAdd_group_chat_triggered()
+{
+    QStringList members;
+    for (int i = 0; i < ui->tbClients->count(); ++i) {
+        QString memberName = ui->tbClients->tabText(i);
+        members.append(memberName);
+    }
+
+    GroupChatDialog dialog(this, members);
+    if (dialog.exec() == QDialog::Accepted) {
+        QString groupName = dialog.getGroupName();
+        QStringList selectedMembers = dialog.getSelectedMembers();
+    }
+}
+
 
 void MainWindow::sendMessage(QString publicKey, QString message, QString receiver)
 {
@@ -269,4 +286,6 @@ void MainWindow::onSendPublicKey(QString publicKey, QString sender)
         }
     }
 }
+
+
 

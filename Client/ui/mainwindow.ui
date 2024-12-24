@@ -81,8 +81,10 @@
      <string>Options</string>
     </property>
     <addaction name="actionConnect"/>
+    <addaction name="actionAdd_group_chat"/>
     <addaction name="separator"/>
     <addaction name="actionExot"/>
+    <addaction name="separator"/>
    </widget>
    <addaction name="menuOptions"/>
   </widget>
@@ -95,6 +97,11 @@
   <action name="actionExot">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionAdd_group_chat">
+   <property name="text">
+    <string>Add group chat</string>
    </property>
   </action>
  </widget>
