@@ -107,6 +107,12 @@ void ClientManager::readyRead()
         emit fileSend(_protocol.receiver(), _protocol.fileName(), _protocol.fileSize(), _protocol.fileData());
         //saveFile();
         break;
+    case ChatProtocol::GroupChat:
+        emit groupChat(_protocol.groupName(), _protocol.memberList());
+        break;
+    case ChatProtocol::TextGroupChat:
+        emit textGroupChat(_protocol.groupName(), _protocol.message());
+        break;
     default:
         break;
     }

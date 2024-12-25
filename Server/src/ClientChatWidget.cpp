@@ -38,6 +38,14 @@ ClientChatWidget::ClientChatWidget(QTcpSocket *client, QWidget *parent) :
         emit sendFile(receiver, fileName, fileSize, fileData, _client->name());
     });
 
+    connect(_client, &ClientManager::groupChat, [this](QString groupName, QStringList memberList){
+        emit groupChat(groupName, memberList, _client->name());
+    });
+
+    connect(_client, &ClientManager::textGroupChat, [this](QString groupName, QString message){
+        emit textGroupChat(groupName, message, _client->name());
+    });
+
     //dir.mkdir(_client->name());
     //dir.setPath("./" + _client->name());
 }

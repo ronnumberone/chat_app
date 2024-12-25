@@ -56,6 +56,11 @@ void ClientManager::sendMessage(QString publicKey, QString message, QString rece
     // EVP_PKEY_free(_publicKey);
 }
 
+void ClientManager::sendGroupMessage(QString message, QString groupName)
+{
+    _socket->write(_protocol.textGroupChatMessage(message, groupName));
+}
+
 void ClientManager::sendName(QString name)
 {
     _socket->write(_protocol.setNameMessage(name));
@@ -79,6 +84,11 @@ void ClientManager::sendFile(QString receiver, QString fileName)
 void ClientManager::sendNewClient(QString uid, QString email, QString loginStatus, QString publicKey)
 {
     _socket->write(_protocol.setNewClient(uid, email, loginStatus, publicKey));
+}
+
+void ClientManager::sendGroupChat(QString groupName, QStringList memberList)
+{
+    _socket->write(_protocol.setGroupChatMessage(groupName, memberList));
 }
 
 void ClientManager::readyRead()
@@ -125,6 +135,12 @@ void ClientManager::readyRead()
         break;
     case ChatProtocol::ClientName:
         emit clientNameChanged(_protocol.prevName(), _protocol.clientName());
+        break;
+    case ChatProtocol::GroupChat:
+        emit groupChat(_protocol.groupName(), _protocol.memberList(), _protocol.myName());
+        break;
+    case ChatProtocol::TextGroupChat:
+        emit textGroupChat(_protocol.groupName(), _protocol.message(), _protocol.sender());
         break;
     default:
         break;

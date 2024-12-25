@@ -39,6 +39,8 @@ signals:
     void statusChanged(ChatProtocol::Status status, QString sender);
     void newClient(QString uid, QString email, QString loginStatus, QString publicKey);
     void sendPublicKey(QString publicKey, QString name);
+    void groupChat(QString groupName, QStringList memberList, QString sender);
+    void textGroupChat(QString groupName, QString message, QString sender);
 
 private:
     Ui::ClientChatWidget *ui;

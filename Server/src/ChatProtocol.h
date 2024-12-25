@@ -3,6 +3,7 @@
 
 #include <QByteArray>
 #include <QString>
+#include <QStringList>
 
 class ChatProtocol
 {
@@ -20,7 +21,8 @@ public:
         ConnectionACK,
         NewClient,
         ClientDisconnected,
-        SetPublicKey
+        GroupChat,
+        TextGroupChat
     };
 
     enum Status{
@@ -40,12 +42,13 @@ public:
     QByteArray setAcceptFileMessage();
     QByteArray setRejectFileMessage();
     QByteArray setFileMessage(QString sender, QString fileName, qint64 fileSize, QByteArray fileData);
+    QByteArray setGroupChatMessage(QString groupName, QStringList memberList, QString clientName);
 
     QByteArray setClientNameMessage(QString prevName, QString name);
     QByteArray setConnectionACKMessage(QString clientName, QStringList otherClients, QMap<QString, QString> publickeys);
     QByteArray setNewClientMessage(QString clientName, QString publicKey);
     QByteArray setClinetDisconnectedMessage(QString clientName);
-    QByteArray setPublicKeyMessage(QString publicKey, QString name);
+    QByteArray textGroupChatMessage(QString message, QString groupName, QString sender);
 
     void loadData(QByteArray data);
     const QString &name() const;
@@ -68,9 +71,16 @@ public:
 
     QString loginStatus() const;
 
+    QString groupName() const;
+
+    QStringList memberList() const;
+
+    QString message() const;
+
 private:
     QByteArray getData(MessageType type, QString data);
 
+    QString _message;
     MessageType _type;
     QByteArray _encryptedMessage;
     QByteArray _encryptedAESKey;
@@ -84,6 +94,8 @@ private:
     QString _email;
     QString _loginStatus;
     QString _publicKey;
+    QString _groupName;
+    QStringList _memberList;
 
 };
 

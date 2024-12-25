@@ -22,6 +22,8 @@ public:
         ConnectionACK,
         NewClient,
         ClientDisconnected,
+        GroupChat,
+        TextGroupChat
     };
 
     enum Status{
@@ -42,6 +44,9 @@ public:
     QByteArray setRejectFileMessage();
     QByteArray setFileMessage(QString receiver, QString fileName);
     QByteArray setNewClient(QString uid, QString email, QString loginStatus, QString publicKey);
+    QByteArray setGroupChatMessage(QString groupName, QStringList memberList);
+    QByteArray textGroupChatMessage(QString message, QString groupName);
+
     void loadData(QByteArray data);
     const QString &name() const;
     Status status() const;
@@ -54,6 +59,9 @@ public:
     const QString &prevName() const;
     const QStringList &clientsName() const;
     const QString &myName() const;
+    QString groupName() const;
+    QStringList memberList() const;
+    QString message() const;
 
     QString sender() const;
 
@@ -68,6 +76,7 @@ public:
 private:
     QByteArray getData(MessageType type, QString data);
 
+    QString _message;
     MessageType _type;
     QByteArray _encryptedMessage;
     QByteArray _encryptedAESKey;
@@ -84,6 +93,8 @@ private:
     QString _myName;
     QString _publicKey;
     QMap<QString, QString> _publicKeys;
+    QString _groupName;
+    QStringList _memberList;
 
 };
 

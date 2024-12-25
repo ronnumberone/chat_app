@@ -41,6 +41,8 @@ signals:
     void fileSaved(QString path);
     void fileSend(QString receiver, QString fileName, qint64 fileSize, QByteArray fileData);
     void newClient(QString uid, QString email, QString loginStatus, QString publicKey);
+    void groupChat(QString groupName, QStringList memberList);
+    void textGroupChat(QString groupName, QString message);
 
 private slots:
     void readyRead();

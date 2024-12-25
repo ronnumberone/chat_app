@@ -19,6 +19,15 @@ QByteArray ChatProtocol::textMessage(QByteArray encryptedAESKey, QByteArray encr
     return ba;
 }
 
+QByteArray ChatProtocol::textGroupChatMessage(QString message, QString groupName, QString sender)
+{
+    QByteArray ba;
+    QDataStream out(&ba, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_15);
+    out << TextGroupChat << groupName << message << sender;
+    return ba;
+}
+
 QByteArray ChatProtocol::isTypingMessage(QString sender)
 {
     return getData(IsTyping, sender);
@@ -94,6 +103,15 @@ QByteArray ChatProtocol::setNewClientMessage(QString clientName, QString publicK
     return ba;
 }
 
+QByteArray ChatProtocol::setGroupChatMessage(QString groupName, QStringList memberList, QString clientName)
+{
+    QByteArray ba;
+    QDataStream out(&ba, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_15);
+    out << GroupChat << groupName << memberList << clientName;
+    return ba;
+}
+
 QByteArray ChatProtocol::setClinetDisconnectedMessage(QString clientName)
 {
     return getData(ClientDisconnected, clientName);
@@ -126,6 +144,12 @@ void ChatProtocol::loadData(QByteArray data)
     case SendFile:
         in >> _receiver >> _fileName >> _fileSize >> _fileData;
         break;
+    case GroupChat:
+        in >> _groupName >> _memberList;
+        break;
+    case TextGroupChat:
+        in >> _groupName >> _message;
+        break;
     default:
         break;
     }
@@ -140,18 +164,24 @@ QByteArray ChatProtocol::getData(MessageType type, QString data)
     return ba;
 }
 
+QString ChatProtocol::message() const
+{
+    return _message;
+}
+
+QStringList ChatProtocol::memberList() const
+{
+    return _memberList;
+}
+
+QString ChatProtocol::groupName() const
+{
+    return _groupName;
+}
+
 QString ChatProtocol::loginStatus() const
 {
     return _loginStatus;
-}
-
-QByteArray ChatProtocol::setPublicKeyMessage(QString publicKey, QString name)
-{
-    QByteArray ba;
-    QDataStream out(&ba, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_15);
-    out << SetPublicKey << publicKey << name;
-    return ba;
 }
 
 QString ChatProtocol::publicKey() const

@@ -25,6 +25,8 @@ public:
     void sendIsTyping(QString receiver);
     void sendFile(QString receiver, QString fileName);
     void sendNewClient(QString uid, QString email, QString loginStatus, QString publicKey);
+    void sendGroupChat(QString groupName, QStringList memberList);
+    void sendGroupMessage(QString message, QString groupName);
 
     ChatProtocol _protocol;
 
@@ -46,6 +48,8 @@ signals:
     void clientDisconnected(QString clientName);
     void sendPublicKey(QString publicKey, QString sender);
     void setPublicKey(QString publicKey);
+    void groupChat(QString groupName, QStringList memberList, QString clientName);
+    void textGroupChat(QString groupName, QString message, QString sender);
 
 private slots:
     void readyRead();

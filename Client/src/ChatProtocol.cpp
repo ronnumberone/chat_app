@@ -19,6 +19,15 @@ QByteArray ChatProtocol::textMessage(QByteArray encryptedAESKey, QByteArray encr
     return ba;
 }
 
+QByteArray ChatProtocol::textGroupChatMessage(QString message, QString groupName)
+{
+    QByteArray ba;
+    QDataStream out(&ba, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_15);
+    out << TextGroupChat << groupName << message;
+    return ba;
+}
+
 QByteArray ChatProtocol::isTypingMessage(QString receiver)
 {
     return getData(IsTyping, receiver);
@@ -82,6 +91,15 @@ QByteArray ChatProtocol::setNewClient(QString uid, QString email, QString loginS
     return ba;
 }
 
+QByteArray ChatProtocol::setGroupChatMessage(QString groupName, QStringList memberList)
+{
+    QByteArray ba;
+    QDataStream out(&ba, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_15);
+    out << GroupChat << groupName << memberList;
+    return ba;
+}
+
 void ChatProtocol::loadData(QByteArray data)
 {
     QDataStream in(&data, QIODevice::ReadOnly);
@@ -118,6 +136,12 @@ void ChatProtocol::loadData(QByteArray data)
     case ConnectionACK:
         in >> _myName >> _clientsName >> _publicKeys;
         break;
+    case GroupChat:
+        in >> _groupName >> _memberList >> _myName;
+        break;
+    case TextGroupChat:
+        in >> _groupName >> _message >> _sender;
+        break;
     default:
         break;
     }
@@ -130,6 +154,21 @@ QByteArray ChatProtocol::getData(MessageType type, QString data)
     out.setVersion(QDataStream::Qt_5_15);
     out << type << data;
     return ba;
+}
+
+QString ChatProtocol::message() const
+{
+    return _message;
+}
+
+QStringList ChatProtocol::memberList() const
+{
+    return _memberList;
+}
+
+QString ChatProtocol::groupName() const
+{
+    return _groupName;
 }
 
 QMap<QString, QString> ChatProtocol::publicKeys() const

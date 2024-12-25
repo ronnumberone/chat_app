@@ -57,6 +57,8 @@ void MainWindow::setupClient()
     //onnect(_client, &ClientManager::clientDisconnected, this, &MainWindow::onClientDisconnected);
     connect(_client, &ClientManager::clientNameChanged, this, &MainWindow::onClientNameChanged);
     connect(_client, &ClientManager::sendPublicKey, this, &MainWindow::onSendPublicKey);
+    connect(_client, &ClientManager::groupChat, this, &MainWindow::onGroupChat);
+    connect(_client, &ClientManager::textGroupChat, this, &MainWindow::onTextGroupChat);
 }
 
 void MainWindow::on_actionConnect_triggered()
@@ -76,13 +78,19 @@ void MainWindow::on_actionAdd_group_chat_triggered()
     if (dialog.exec() == QDialog::Accepted) {
         QString groupName = dialog.getGroupName();
         QStringList selectedMembers = dialog.getSelectedMembers();
+
+        _client->sendGroupChat(groupName, selectedMembers);
     }
 }
 
 
 void MainWindow::sendMessage(QString publicKey, QString message, QString receiver)
 {
-    _client->sendMessage(publicKey, message, receiver);
+    if(receiver.contains("GR: ")){
+        _client->sendGroupMessage(message, receiver);
+    } else {
+        _client->sendMessage(publicKey, message, receiver);
+    }
 }
 
 void MainWindow::dataReceived(QString message, QString sender)
@@ -287,5 +295,25 @@ void MainWindow::onSendPublicKey(QString publicKey, QString sender)
     }
 }
 
+void MainWindow::onGroupChat(QString groupName, QStringList memberList, QString myName)
+{
+    auto chatWidget = new ClientChatWidget("GR: " + groupName, ui->tbClients);
+    connect(chatWidget, &ClientChatWidget::sendMessage, this, &MainWindow::sendMessage);
+    connect(chatWidget, &ClientChatWidget::isTyping, _client, &ClientManager::sendIsTyping);
+    connect(chatWidget, &ClientChatWidget::sendFile, _client, &ClientManager::sendFile);
+    ui->tbClients->addTab(chatWidget, "GR: " + groupName);
+}
 
-
+void MainWindow::onTextGroupChat(QString groupName, QString message, QString sender)
+{
+    for (int i = 0; i < ui->tbClients->count(); ++i) {
+        QString tabReceiver = ui->tbClients->tabText(i);
+        if (tabReceiver == groupName) {
+            ClientChatWidget *chatWidget = qobject_cast<ClientChatWidget*>(ui->tbClients->widget(i));
+            if (chatWidget) {
+                chatWidget->dataReceived(message, sender);
+            }
+            break;
+        }
+    }
+}

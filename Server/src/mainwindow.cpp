@@ -31,6 +31,8 @@ void MainWindow::newClientConnected(QTcpSocket *client)
     connect(chatWidget, &ClientChatWidget::textForOtherClients, _server, &ServerManager::onTextForOtherClients);
     connect(chatWidget, &ClientChatWidget::sendFile, _server, &ServerManager::onSendFile);
     connect(chatWidget, &ClientChatWidget::newClient, _server, &ServerManager::onNewClient);
+    connect(chatWidget, &ClientChatWidget::groupChat, _server, &ServerManager::onGroupChat);
+    connect(chatWidget, &ClientChatWidget::textGroupChat, _server, &ServerManager::onTextGroupChat);
 }
 
 void MainWindow::clientDisconnected(QTcpSocket *client)

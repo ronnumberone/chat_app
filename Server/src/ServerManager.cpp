@@ -142,6 +142,33 @@ void ServerManager::onNewClient(QString uid, QString email, QString loginStatus,
     }
 }
 
+void ServerManager::onGroupChat(QString groupName, QStringList memberList, QString clientName)
+{
+    memberList.append(clientName);
+    QByteArray newClientMessage;
+    foreach (auto cl, _clients) {
+        QString clientName = cl->property("clientName").toString();
+        if(memberList.contains(clientName)) {
+            newClientMessage = _protocol.setGroupChatMessage(groupName, memberList, clientName);
+            cl->write(newClientMessage);
+        }
+    }
+    groupList[groupName] = memberList;
+}
+
+void ServerManager::onTextGroupChat(QString groupName, QString message, QString sender)
+{
+    QByteArray textGroupChatMessage = _protocol.textGroupChatMessage(message, groupName, sender);
+    QStringList clientNameList = groupList[groupName.remove("GR: ")];
+    QString clientName;
+    foreach (auto cl, _clients) {
+        clientName = cl->property("clientName").toString();
+        if(clientNameList.contains(clientName) && clientName != sender) {
+            cl->write(textGroupChatMessage);
+        }
+    }
+}
+
 void ServerManager::onClientTyping(QString sender, QString receiver)
 {
     auto typingMessage = _protocol.isTypingMessage(sender);

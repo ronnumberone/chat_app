@@ -33,6 +33,8 @@ private slots:
     void onClientNameChanged(QString prevName, QString clientName);
     void onStatusChanged(ChatProtocol::Status status, QString sender);
     void onSendPublicKey(QString publicKey, QString sender);
+    void onGroupChat(QString groupName, QStringList memberList, QString myName);
+    void onTextGroupChat(QString groupName, QString message, QString sender);
     //void onClientDisconnected(QString clientName);
 
     void on_actionAdd_group_chat_triggered();
