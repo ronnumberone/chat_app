@@ -5,7 +5,8 @@
 #include <QNetworkAccessManager>
 #include <QVariantMap>
 
-class DatabaseManager : public QObject
+class
+    DatabaseManager : public QObject
 {
     Q_OBJECT
 public:
@@ -14,6 +15,8 @@ public:
     void updateUserName(const QString &prevName, const QString &name);
     void registerNewClient(const QString &uid, const QString &email);
     void getClientData(const QString &uid, std::function<void(QVariantMap)> callback);
+    void saveMessageToDatabase(QByteArray encryptedAESKey, QByteArray encryptedMessage, QString receiver, QString sender);
+    void saveGroupToDatabase(QString groupName, QStringList memberList, QString adminId);
 
 private:
     QNetworkAccessManager *m_networkManager;

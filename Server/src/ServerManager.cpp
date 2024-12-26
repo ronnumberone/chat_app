@@ -34,6 +34,8 @@ void ServerManager::notifyOtherClients(QString prevName, QString name)
 
 void ServerManager::onTextForOtherClients(QByteArray encryptedAESKey, QByteArray encryptedMessage, QString receiver, QString sender)
 {
+    m_databaseManager->saveMessageToDatabase(encryptedAESKey, encryptedMessage, receiver, sender);
+
     auto msg = _protocol.textMessage(encryptedAESKey, encryptedMessage, sender);
     foreach (auto cl, _clients) {
         auto clientName = cl->property("clientName").toString();
@@ -145,6 +147,9 @@ void ServerManager::onNewClient(QString uid, QString email, QString loginStatus,
 void ServerManager::onGroupChat(QString groupName, QStringList memberList, QString clientName)
 {
     memberList.append(clientName);
+
+    m_databaseManager->saveGroupToDatabase(groupName, memberList, clientName);
+
     QByteArray newClientMessage;
     foreach (auto cl, _clients) {
         QString clientName = cl->property("clientName").toString();
